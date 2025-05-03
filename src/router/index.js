@@ -90,6 +90,20 @@ const routes = [
     // ],
   },
 
+  // 登录/注册路由，均指向AuthPage.vue
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login/AuthPage.vue'),
+    meta: { title: '登录' },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/Login/AuthPage.vue'),
+    meta: { title: '注册' },
+  },
+
   // 登录/注册（假设需权限控制）
   // {
   //   path: '/login',
