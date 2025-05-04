@@ -2,24 +2,23 @@
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      // 主色
-      'base': #27ba9b,
+      'base': rgb(37, 117, 225),
     ),
     'success': (
       // 成功色
-      'base': #1dc779,
+      'base': #6ee7b7,
     ),
     'warning': (
       // 警告色
-      'base': #ffb302,
+      'base': #ffe066,
     ),
     'danger': (
       // 危险色
-      'base': #e26237,
+      'base': #ffb6b9,
     ),
     'error': (
       // 错误色
-      'base': #cf4444,
+      'base': #6c63ff,
     ),
   )
 );

@@ -1,5 +1,6 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import Layout from '@/views/Layout/MainLayout.vue' // 全局布局组件
 
 const routes = [
@@ -95,13 +96,13 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login/AuthPage.vue'),
-    meta: { title: '登录' },
+    meta: { title: '登录', requiresAuth: false },
   },
   {
     path: '/register',
     name: 'Register',
     component: () => import('@/views/Login/AuthPage.vue'),
-    meta: { title: '注册' },
+    meta: { title: '注册', requiresAuth: false },
   },
 
   // 登录/注册（假设需权限控制）
@@ -127,8 +128,26 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  // 检查登录状态
+  authStore.checkAuth()
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // 需要登录但未登录，重定向到登录页
+    next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && authStore.isAuthenticated) {
+    // 已登录用户访问登录/注册页，重定向到首页
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router

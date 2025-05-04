@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -14,15 +15,6 @@ import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // server: {
-  //   proxy: {
-  //     '/api': {
-  //       target: 'http://localhost:5173', // 防止路径回退到index.html
-  //       changeOrigin: true
-  //     }
-  //   }
-  // },
-  // 保持原有mock配置
   plugins: [
     vue(),
     vueDevTools(),
@@ -41,7 +33,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': path.resolve(__dirname, 'src'),
     },
   },
   css: {
@@ -51,6 +43,15 @@ export default defineConfig({
         @use "@/styles/element/index.scss" as *;
         @use "@/styles/var.scss" as *;
         `,
+      },
+    },
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
       },
     },
   },

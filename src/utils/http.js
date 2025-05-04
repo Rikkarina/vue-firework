@@ -1,9 +1,12 @@
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
+import { ElMessage } from 'element-plus'
+import router from '@/router'
 
 // 创建一个 Axios 实例
 const instance = axios.create({
-  baseURL: '/api', // 替换为你的 API 基础 URL
-  timeout: 5000, // 请求超时时间，单位为毫秒
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
     // // 在这里添加其他默认请求头
@@ -16,12 +19,10 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   (config) => {
-    // 在发送请求之前做些什么
-    // 例如，可以在这里添加请求头，如添加 token
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //     config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const authStore = useAuthStore()
+    if (authStore.token) {
+      config.headers.Authorization = `Bearer ${authStore.token}`
+    }
     return config
   },
   (error) => {
@@ -34,12 +35,33 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
-    // 对响应数据做点什么
-    return response.data
+    return response
   },
   (error) => {
-    // 处理响应错误
-    console.error('响应出错:', error)
+    if (error.response) {
+      const authStore = useAuthStore()
+      switch (error.response.status) {
+        case 401:
+          // Token 过期或无效
+          authStore.logout()
+          ElMessage.error('登录已过期，请重新登录')
+          router.push('/login')
+          break
+        case 403:
+          ElMessage.error('没有权限访问')
+          break
+        case 404:
+          ElMessage.error('请求的资源不存在')
+          break
+        case 500:
+          ElMessage.error('服务器错误')
+          break
+        default:
+          ElMessage.error(error.response.data?.message || '请求失败')
+      }
+    } else {
+      ElMessage.error('网络错误，请检查网络连接')
+    }
     return Promise.reject(error)
   },
 )

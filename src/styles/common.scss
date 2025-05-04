@@ -9,7 +9,7 @@ html {
 }
 body {
   height: 100%;
-  color: #333;
+  color: #3a5fa8;
   min-width: 1240px;
   font:
     1em/1.4 'Microsoft Yahei',
@@ -21,6 +21,7 @@ body {
     'Microsoft Sans Serif',
     'WenQuanYi Micro Hei',
     sans-serif;
+  background: #e6effa;
 }
 body,
 ul,
@@ -35,7 +36,7 @@ dd {
 }
 a {
   text-decoration: none;
-  color: #333;
+  color: #4db3ff;
   outline: none;
 }
 i {
@@ -64,7 +65,7 @@ ul {
 }
 
 #app {
-  background: #f5f5f5;
+  background: #f5faff;
   user-select: none;
 }
 
