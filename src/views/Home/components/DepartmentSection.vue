@@ -37,6 +37,7 @@ defineProps({
 <style lang="scss" scoped>
 .department-section {
   margin-bottom: 40px;
+  margin-left: 20px;
 
   .department-title {
     margin-bottom: 20px;
@@ -49,6 +50,7 @@ defineProps({
   $grid-gap: 20px;
 
   .course-grid {
+    margin-left: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;

@@ -27,7 +27,8 @@ const departments = ref([
     courses: [
       {
         title: 'Python编程入门',
-        description: '学习Python编程的基础，帮助入门编程。',
+        description:
+          '学习Python编程的基础，帮助入门编程。学习Python编程的基础，帮助入门编程。学习Python编程的基础，帮助入门编程。学习Python编程的基础，帮助入门编程。学习Python编程的基础，帮助入门编程。',
         date: '2023/11/01',
       },
       // 可继续添加其他课程...
