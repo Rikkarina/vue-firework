@@ -9,10 +9,10 @@ const service = axios.create({
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
-    // // // 在这里添加其他默认请求头
-    // 'Cache-Control': 'no-cache, no-store, must-revalidate',
-    // Pragma: 'no-cache',
-    // Expires: '0',
+    // // 在这里添加其他默认请求头
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
   },
 })
 
