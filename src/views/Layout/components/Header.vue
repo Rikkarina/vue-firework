@@ -1,27 +1,32 @@
 <template>
   <el-header class="header">
-    <div class="logo">Firework</div>
-    <div class="header-right">
+    <div class="header-left">
+      <span class="welcome">👋 欢迎使用Firework！</span>
+    </div>
+    <div class="header-center">
       <el-input
-        placeholder="搜索..."
         v-model="searchQuery"
+        placeholder="搜索..."
+        class="search-input"
         clearable
-        @clear="handleSearchClear"
         @keyup.enter="handleSearch"
       >
-        <template #prefix>
-          <el-icon><search /></el-icon>
+        <template #suffix>
+          <el-icon class="search-icon" @click="handleSearch"><search /></el-icon>
         </template>
       </el-input>
-      <div class="icon-group">
-        <el-tooltip content="消息中心" placement="bottom">
-          <el-icon @click="goToMessageCenter"><message /></el-icon>
-        </el-tooltip>
-        <el-tooltip content="设置" placement="bottom">
-          <el-icon @click="goToSettings"><setting /></el-icon>
-        </el-tooltip>
-        <el-avatar size="small" src="https://via.placeholder.com/50x50" @click="goToProfile" />
-      </div>
+    </div>
+    <div class="header-right">
+      <el-tooltip content="夜间模式" placement="bottom"
+        ><el-icon class="icon-btn"><moon /></el-icon
+      ></el-tooltip>
+      <el-tooltip content="消息中心" placement="bottom"
+        ><el-icon class="icon-btn"><message /></el-icon
+      ></el-tooltip>
+      <el-tooltip content="设置" placement="bottom"
+        ><el-icon class="icon-btn"><setting /></el-icon
+      ></el-tooltip>
+      <el-avatar size="small" src="https://via.placeholder.com/40x40" class="avatar" />
     </div>
   </el-header>
 </template>
@@ -29,7 +34,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Message, Setting } from '@element-plus/icons-vue'
+import { Search, Moon, Message, Setting } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -39,51 +44,65 @@ const handleSearch = () => {
     router.push({ name: 'SearchResult', query: { q: searchQuery.value } })
   }
 }
-
-const handleSearchClear = () => {
-  searchQuery.value = ''
-}
-
-const goToMessageCenter = () => {
-  router.push('/messages')
-}
-
-const goToSettings = () => {
-  // 设置页面逻辑
-}
-
-const goToProfile = () => {
-  router.push('/profile')
-}
 </script>
 
 <style lang="scss" scoped>
 .header {
+  padding: 0 32px;
+  height: 60px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  justify-content: space-between;
   background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px #f0f1f2;
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
 
-  .logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #2b6cb6;
+    .welcome {
+      font-size: 16px;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      b {
+        color: #222;
+      }
+    }
   }
-
+  .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    .search-input {
+      width: 340px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #f0f1f2;
+      .el-input__wrapper {
+        border-radius: 12px;
+      }
+      .search-icon {
+        cursor: pointer;
+      }
+    }
+  }
   .header-right {
     display: flex;
     align-items: center;
-    gap: 16px;
-
-    .el-input {
-      width: 300px;
+    gap: 18px;
+    .icon-btn {
+      font-size: 22px;
+      color: #b0b3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+      &:hover {
+        color: #409eff;
+      }
     }
-
-    .icon-group {
-      display: flex;
-      gap: 12px;
+    .avatar {
+      margin-left: 6px;
+      border: 2px solid #f0f1f2;
     }
   }
 }

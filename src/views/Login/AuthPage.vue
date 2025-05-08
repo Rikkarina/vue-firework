@@ -18,6 +18,7 @@ watch(
 )
 
 const onSubmit = async (form) => {
+  // 出错的代码已经在store中处理了，这里不需要再处理
   if (mode.value === 'login') {
     await authStore.login(form)
   } else {

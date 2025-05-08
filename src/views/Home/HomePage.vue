@@ -1,22 +1,25 @@
 <template>
-  <div class="home-content">
-    <div class="welcome-message">
-      <el-icon :size="20"><emoji-satisfied /></el-icon>
-      欢迎使用 Firework！
+  <div class="home-page-layout">
+    <div class="home-content">
+      <DepartmentSection
+        v-for="(dept, index) in departments"
+        :key="index"
+        :department-name="dept.name"
+        :courses="dept.courses"
+      />
     </div>
-
-    <DepartmentSection
-      v-for="(dept, index) in departments"
-      :key="index"
-      :department-name="dept.name"
-      :courses="dept.courses"
-    />
+    <div class="home-side">
+      <MessageCenter class="side-block" />
+      <LastVisited class="side-block" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import DepartmentSection from './components/DepartmentSection.vue'
+import MessageCenter from './components/MessageCenter.vue'
+import LastVisited from './components/LastVisited.vue'
 
 const departments = ref([
   {
@@ -41,15 +44,24 @@ const departments = ref([
 </script>
 
 <style lang="scss" scoped>
+.home-page-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+}
 .home-content {
-  padding: 20px;
-
-  .welcome-message {
-    margin-bottom: 30px;
-    font-size: 18px;
-    color: var(--text-primary, #606266);
-  }
-
-
+  flex: 3;
+  padding: 20px 0 20px 20px;
+}
+.home-side {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 20px 20px 0;
+}
+.side-block {
+  margin-bottom: 0;
 }
 </style>

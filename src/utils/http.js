@@ -1,15 +1,15 @@
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 
-// 创建一个 Axios 实例
-const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000,
+// 创建axios实例
+const service = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
-    // // 在这里添加其他默认请求头
+    // // // 在这里添加其他默认请求头
     // 'Cache-Control': 'no-cache, no-store, must-revalidate',
     // Pragma: 'no-cache',
     // Expires: '0',
@@ -17,53 +17,65 @@ const instance = axios.create({
 })
 
 // 请求拦截器
-instance.interceptors.request.use(
+service.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
     if (authStore.token) {
-      config.headers.Authorization = `Bearer ${authStore.token}`
+      config.headers['Authorization'] = `Bearer ${authStore.token}`
     }
     return config
   },
   (error) => {
-    // 处理请求错误
-    console.error('请求出错:', error)
+    console.error('请求错误：', error)
     return Promise.reject(error)
   },
 )
 
 // 响应拦截器
-instance.interceptors.response.use(
+service.interceptors.response.use(
   (response) => {
-    return response
+    const res = response.data
+    if (res.code !== 200) {
+      ElMessage.error(res.message || '请求失败')
+      return Promise.reject(new Error(res.message || '请求失败'))
+    }
+    return res
   },
   (error) => {
+    console.error('响应错误：', error)
+    const authStore = useAuthStore()
+
     if (error.response) {
-      const authStore = useAuthStore()
       switch (error.response.status) {
         case 401:
-          // Token 过期或无效
-          authStore.logout()
           ElMessage.error('登录已过期，请重新登录')
+          authStore.logout()
           router.push('/login')
           break
         case 403:
-          ElMessage.error('没有权限访问')
+          ElMessage.error('没有权限访问该资源')
           break
         case 404:
           ElMessage.error('请求的资源不存在')
           break
         case 500:
-          ElMessage.error('服务器错误')
+          ElMessage.error('服务器错误，请稍后重试')
           break
         default:
           ElMessage.error(error.response.data?.message || '请求失败')
       }
+    } else if (error.request) {
+      ElMessage.error('网络错误，请检查您的网络连接')
     } else {
-      ElMessage.error('网络错误，请检查网络连接')
+      ElMessage.error(error.message || '请求配置错误')
     }
     return Promise.reject(error)
   },
 )
 
-export default instance
+// 封装请求方法
+const request = (config) => {
+  return service(config)
+}
+
+export default request

@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 import path from 'path'
 
 import { defineConfig } from 'vite'
@@ -9,7 +9,8 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
-// import ElementPlus from 'unplugin-element-plus/vite'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 import { viteMockServe } from 'vite-plugin-mock'
 
@@ -47,12 +48,21 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 5174,
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
+    },
+  },
+  envDir: './',
+  envPrefix: 'VITE_',
+  // 这里可以添加http.js需要的环境变量
+  define: {
+    'process.env': {
+      // 示例环境变量，根据http.js实际需求修改
+      API_BASE_URL: JSON.stringify('http://localhost:3000'),
     },
   },
 })

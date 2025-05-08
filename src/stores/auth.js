@@ -25,6 +25,7 @@ export const useAuthStore = defineStore(
     const login = async (form) => {
       try {
         const { data } = await loginApi(form)
+        console.log(data)
         handleAuthResponse(data)
       } catch (error) {
         ElMessage.error(error.message || '登录失败')
@@ -66,6 +67,7 @@ export const useAuthStore = defineStore(
       checkAuth,
     }
   },
+  // 持久化到localStorage的方法，persist插件已经帮我们实现了
   {
     persist: {
       key: 'auth',
