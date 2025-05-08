@@ -1,11 +1,13 @@
 <template>
   <el-card class="course-card">
-    <div class="course-icon">
-      <el-icon :size="32"><file-document /></el-icon>
+    <div class="card-header">
+      <div class="course-icon">
+        <span class="icon-text">{{ title.charAt(0).toUpperCase() }}</span>
+      </div>
+      <div class="course-title">{{ title }}</div>
     </div>
-    <h3 class="course-title">{{ title }}</h3>
-    <p class="course-desc">{{ description }}</p>
-    <p class="course-date">最后修改日期：{{ date }}</p>
+    <div class="course-desc">{{ description }}</div>
+    <div class="course-date">最后修改日期：{{ date }}</div>
   </el-card>
 </template>
 
@@ -28,45 +30,72 @@ defineProps({
 
 <style lang="scss" scoped>
 $card-bg: #fff;
-$title-color: #333;
-$desc-color: #666;
+$title-color: #111;
+$desc-color: #555;
 $date-color: #999;
-
-// 新增尺寸变量
-$card-size: 200px;
-$card-margin: 10px;
+$icon-bg: #f3f5f7;
+$icon-color: #222;
+$icon-size: 40px;
+$icon-radius: 8px;
 
 .course-card {
-  width: $card-size;
-  height: $card-size;
-  margin: $card-margin;
-  padding: 20px;
-  text-align: center;
+  width: 200px;
+  min-height: 120px;
   background: $card-bg;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  position: relative;
 
-  .course-icon {
-    margin-bottom: 10px;
-  }
-
-  .course-title {
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: $title-color;
+  .card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    .course-icon {
+      width: $icon-size;
+      height: $icon-size;
+      background: $icon-bg;
+      border-radius: $icon-radius;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      .icon-text {
+        font-size: 24px;
+        font-weight: 700;
+        color: $icon-color;
+        font-family: 'Inter', 'Arial', sans-serif;
+        user-select: none;
+      }
+    }
+    .course-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: $title-color;
+      line-height: 1.2;
+      word-break: break-all;
+    }
   }
 
   .course-desc {
-    margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 13px;
     color: $desc-color;
-    height: 40px;
-    overflow: hidden;
+    margin-top: 2px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    word-break: break-all;
   }
 
   .course-date {
-    font-size: 12px;
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    font-size: 11px;
     color: $date-color;
+    letter-spacing: 0.5px;
   }
 }
 </style>

@@ -48,20 +48,27 @@ const departments = ref([
   display: flex;
   flex-direction: row;
   gap: 32px;
-}
-.home-content {
-  flex: 3;
-  padding: 20px 0 20px 20px;
-}
-.home-side {
-  flex: 1;
-  min-width: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 20px 20px 20px 0;
-}
-.side-block {
-  margin-bottom: 0;
+
+  .home-content {
+    flex: 3;
+    padding: 20px 0 20px 20px;
+    .welcome-message {
+      margin-bottom: 30px;
+      font-size: 18px;
+      color: var(--text-primary, #606266);
+    }
+  }
+
+  .home-side {
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 20px 20px 20px 0;
+    .side-block {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>
