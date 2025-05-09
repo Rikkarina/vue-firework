@@ -10,6 +10,13 @@ const departments = [
         description:
           '学习Python编程的基础，帮助入门编程。课程内容包括Python语法基础、数据类型、控制流程、函数、模块等核心概念。通过实践项目，掌握Python编程的基本技能。',
         date: '2024/03/15',
+        teachers: [{ name: '张教授' }, { name: '王教授' }],
+        semester: {
+          grade: '大一',
+          term: '春季',
+        },
+        credits: 4,
+        courseType: '必修',
       },
       {
         id: 102,
@@ -17,6 +24,13 @@ const departments = [
         description:
           '深入学习计算机科学中的基础数据结构与算法。包括数组、链表、栈、队列、树、图等数据结构，以及排序、搜索、动态规划等经典算法。',
         date: '2024/03/14',
+        teachers: [{ name: '李教授' }],
+        semester: {
+          grade: '大二',
+          term: '春季',
+        },
+        credits: 5,
+        courseType: '必修',
       },
       {
         id: 103,
@@ -217,28 +231,51 @@ const departments = [
 ]
 
 const mockData = [
-  // 获取所有部门及其课程信息
+  // 获取所有部门及其课程信息（只返回基础信息）
   {
     url: '/api/departments',
     method: 'GET',
     response: () => {
+      // 只返回课程的基础信息
+      const simplifiedDepartments = departments.map((dept) => ({
+        id: dept.id,
+        name: dept.name,
+        courses: dept.courses.map((course) => ({
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          date: course.date,
+        })),
+      }))
+
       return {
         code: 200,
         message: '获取成功',
-        data: departments,
+        data: simplifiedDepartments,
       }
     },
   },
-  // 获取单个部门的课程信息
+  // 获取单个部门的课程信息（返回完整信息）
   {
     url: '/api/departments/:id/courses',
     method: 'GET',
     response: ({ query }) => {
       const department = departments.find((dept) => dept.id === parseInt(query.id))
+      if (!department) {
+        return {
+          code: 404,
+          message: '部门不存在',
+          data: null,
+        }
+      }
+
       return {
         code: 200,
-        message: department ? '获取成功' : '部门不存在',
-        data: department ? department.courses : [],
+        message: '获取成功',
+        data: {
+          departmentName: department.name,
+          courses: department.courses, // 返回完整的课程信息
+        },
       }
     },
   },

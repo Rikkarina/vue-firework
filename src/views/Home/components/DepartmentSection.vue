@@ -21,8 +21,9 @@
 </template>
 
 <script setup>
-import CourseCard from './CourseCard.vue'
+import CourseCard from '../../../components/CourseCard.vue'
 import { More } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   department: {
@@ -34,10 +35,14 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
+
 // 处理查看更多点击
 const handleMoreClick = () => {
-  // TODO: 实现查看更多逻辑，可以跳转到部门详情页或展开更多课程
-  console.log('查看更多课程:', props.department.name)
+  router.push({
+    name: 'DepartmentDetail',
+    params: { id: props.department.id },
+  })
 }
 </script>
 

@@ -16,6 +16,13 @@ const routes = [
         component: () => import('@/views/Home/HomePage.vue'),
         meta: { title: '首页', requiresAuth: true }, // 假设需登录
       },
+      // 部门详情页
+      {
+        path: 'department/:id',
+        name: 'DepartmentDetail',
+        component: () => import('@/views/Department/DepartmentDetail.vue'),
+        meta: { title: '部门详情', requiresAuth: true },
+      },
     ],
 
     //   // 资源浏览与分类
