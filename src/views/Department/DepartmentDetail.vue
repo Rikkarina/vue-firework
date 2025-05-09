@@ -31,6 +31,7 @@
         <CourseCard
           v-for="course in filteredCourses"
           :key="course.id"
+          :id="course.id"
           :title="course.title"
           :description="course.description"
           :date="course.date"

@@ -1,6 +1,6 @@
 <template>
   <el-aside class="sidebar" width="200px">
-    <div class="sidebar-logo">
+    <div class="sidebar-logo" @click="handleLogoClick">
       <img src="@/assets/logo.png" alt="logo" class="logo-img" />
     </div>
     <el-menu
@@ -45,6 +45,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   Grid,
   Collection,
@@ -54,7 +55,13 @@ import {
   QuestionFilled,
   User,
 } from '@element-plus/icons-vue'
+
+const router = useRouter()
 const activeIndex = ref('1')
+
+const handleLogoClick = () => {
+  router.push('/home')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -73,6 +80,13 @@ const activeIndex = ref('1')
     justify-content: center;
     align-items: center;
     background: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
     .logo-img {
       height: 54px;
       width: auto;

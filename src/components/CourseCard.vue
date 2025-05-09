@@ -1,5 +1,5 @@
 <template>
-  <el-card class="course-card">
+  <el-card class="course-card" @click="handleClick">
     <div class="card-header">
       <div class="course-icon">
         <span class="icon-text">{{ title.charAt(0).toUpperCase() }}</span>
@@ -24,7 +24,13 @@
 
 <script setup>
 import { ref, defineProps, onUnmounted } from 'vue'
-defineProps({
+import { useRouter } from 'vue-router'
+
+const props = defineProps({
+  id: {
+    type: [Number, String],
+    required: true,
+  },
   title: {
     type: String,
     default: 'Python编程入门',
@@ -38,6 +44,9 @@ defineProps({
     default: '2023/11/01',
   },
 })
+
+const router = useRouter()
+
 const tooltipVisible = ref(false)
 const tooltipStyle = ref({})
 const descRef = ref(null)
@@ -68,6 +77,15 @@ function hideTooltip() {
 onUnmounted(() => {
   tooltipVisible.value = false
 })
+
+const handleClick = () => {
+  router.push({
+    name: 'CourseFiles',
+    params: {
+      courseId: props.id,
+    },
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -91,6 +109,12 @@ $card-height: 180px; // 4:3比例
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+  }
 
   .card-header {
     display: flex;

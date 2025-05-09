@@ -5,6 +5,7 @@
       <template v-for="(course, index) in department.courses" :key="course.id">
         <CourseCard
           v-if="index < 7"
+          :id="course.id"
           :title="course.title"
           :description="course.description"
           :date="course.date"

@@ -66,7 +66,10 @@ const searchQuery = ref('')
 
 const handleSearch = () => {
   if (searchQuery.value) {
-    router.push({ name: 'SearchResult', query: { q: searchQuery.value } })
+    router.push({
+      name: 'FileSearch',
+      query: { keyword: searchQuery.value },
+    })
   }
 }
 
