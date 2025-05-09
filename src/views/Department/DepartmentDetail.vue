@@ -10,9 +10,26 @@
       <div class="header">
         <h1 class="department-name">{{ departmentName }}</h1>
       </div>
+      <div class="filters">
+        <el-select v-model="selectedSemester" placeholder="学期" clearable style="width: 120px">
+          <el-option
+            v-for="item in semesterOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-select v-model="selectedCredits" placeholder="学分" clearable style="width: 100px">
+          <el-option v-for="item in creditsOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <el-select v-model="selectedType" placeholder="课程类型" clearable style="width: 100px">
+          <el-option label="必修" value="必修" />
+          <el-option label="选修" value="选修" />
+        </el-select>
+      </div>
       <div class="course-grid">
         <CourseCard
-          v-for="course in courses"
+          v-for="course in filteredCourses"
           :key="course.id"
           :title="course.title"
           :description="course.description"
@@ -24,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getDepartmentCourses } from '@/apis/department'
 
@@ -34,12 +51,59 @@ const error = ref(null)
 const departmentName = ref('')
 const courses = ref([])
 
+const selectedSemester = ref('')
+const selectedCredits = ref('')
+const selectedType = ref('')
+
+const semesterOptions = computed(() => {
+  const set = new Set()
+  courses.value.forEach((c) => {
+    if (c.semester?.grade && c.semester?.term) {
+      set.add(`${c.semester.grade}-${c.semester.term}`)
+    }
+  })
+  return Array.from(set).map((v) => ({
+    label: v,
+    value: v,
+  }))
+})
+
+const creditsOptions = computed(() => {
+  const set = new Set()
+  courses.value.forEach((c) => {
+    if (c.credits) {
+      set.add(c.credits)
+    }
+  })
+  return ['全部', ...Array.from(set)]
+})
+
+const filteredCourses = computed(() => {
+  return courses.value.filter((course) => {
+    let match = true
+    if (selectedSemester.value && course.semester?.grade && course.semester?.term) {
+      match = match && `${course.semester.grade}-${course.semester.term}` === selectedSemester.value
+    }
+    if (selectedCredits.value && selectedCredits.value !== '全部') {
+      match = match && course.credits === selectedCredits.value
+    }
+    if (selectedType.value) {
+      match = match && course.courseType === selectedType.value
+    }
+    return match
+  })
+})
+
 const fetchDepartmentCourses = async () => {
   loading.value = true
   try {
     const res = await getDepartmentCourses(route.params.id)
-    departmentName.value = res.data.departmentName
-    courses.value = res.data.courses
+    if (res.data) {
+      departmentName.value = res.data.departmentName
+      courses.value = res.data.courses
+    } else {
+      error.value = '数据格式错误'
+    }
   } catch (err) {
     error.value = err.message
   } finally {
@@ -81,6 +145,13 @@ onMounted(() => {
       color: var(--el-text-color-primary);
       font-weight: 600;
     }
+  }
+
+  .filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    margin-left: 20px;
   }
 
   .course-grid {

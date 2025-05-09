@@ -38,6 +38,13 @@ const departments = [
         description:
           '学习操作系统的基本概念和原理，包括进程管理、内存管理、文件系统、设备管理等核心内容。通过实验加深对操作系统工作原理的理解。',
         date: '2024/03/13',
+        teachers: [{ name: '刘教授' }, { name: '陈教授' }],
+        semester: {
+          grade: '大二',
+          term: '秋季',
+        },
+        credits: 4,
+        courseType: '必修',
       },
       {
         id: 104,
@@ -45,6 +52,13 @@ const departments = [
         description:
           '掌握计算机网络的基本原理和协议，包括TCP/IP协议栈、网络层、传输层、应用层等内容。通过实验学习网络配置和故障排查。',
         date: '2024/03/12',
+        teachers: [{ name: '赵教授' }],
+        semester: {
+          grade: '大三',
+          term: '春季',
+        },
+        credits: 4,
+        courseType: '必修',
       },
       {
         id: 105,
@@ -52,6 +66,13 @@ const departments = [
         description:
           '学习数据库设计和管理，包括关系数据库、SQL语言、数据库优化、事务处理等内容。通过项目实践掌握数据库应用开发。',
         date: '2024/03/11',
+        teachers: [{ name: '孙教授' }, { name: '周教授' }],
+        semester: {
+          grade: '大二',
+          term: '秋季',
+        },
+        credits: 3,
+        courseType: '必修',
       },
       {
         id: 106,
@@ -59,6 +80,13 @@ const departments = [
         description:
           '了解软件开发的完整生命周期，包括需求分析、系统设计、编码实现、测试维护等环节。学习敏捷开发方法和工具使用。',
         date: '2024/03/10',
+        teachers: [{ name: '吴教授' }],
+        semester: {
+          grade: '大三',
+          term: '春季',
+        },
+        credits: 3,
+        courseType: '必修',
       },
       {
         id: 107,
@@ -66,6 +94,13 @@ const departments = [
         description:
           '介绍人工智能的基本概念和应用，包括机器学习、深度学习、自然语言处理等内容。通过实践项目了解AI技术应用。',
         date: '2024/03/09',
+        teachers: [{ name: '郑教授' }, { name: '钱教授' }],
+        semester: {
+          grade: '大三',
+          term: '秋季',
+        },
+        credits: 4,
+        courseType: '选修',
       },
       {
         id: 108,
@@ -73,6 +108,13 @@ const departments = [
         description:
           '学习现代Web开发技术，包括前端框架、后端开发、数据库集成等内容。通过项目实践掌握全栈开发技能。',
         date: '2024/03/08',
+        teachers: [{ name: '冯教授' }],
+        semester: {
+          grade: '大二',
+          term: '秋季',
+        },
+        credits: 3,
+        courseType: '选修',
       },
       {
         id: 109,
@@ -80,6 +122,13 @@ const departments = [
         description:
           '掌握移动应用开发技术，包括Android和iOS平台开发、UI设计、性能优化等内容。通过项目实践开发移动应用。',
         date: '2024/03/07',
+        teachers: [{ name: '朱教授' }, { name: '杨教授' }],
+        semester: {
+          grade: '大三',
+          term: '春季',
+        },
+        credits: 3,
+        courseType: '选修',
       },
       {
         id: 110,
@@ -87,6 +136,13 @@ const departments = [
         description:
           '学习云计算和大数据技术，包括分布式系统、Hadoop生态、数据挖掘等内容。通过实践了解云平台使用和大数据处理。',
         date: '2024/03/06',
+        teachers: [{ name: '秦教授' }],
+        semester: {
+          grade: '大三',
+          term: '秋季',
+        },
+        credits: 4,
+        courseType: '选修',
       },
     ],
   },
