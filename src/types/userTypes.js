@@ -50,13 +50,12 @@ export const UserStatus = {
 }
 
 /**
- * 收藏夹信息接口
+ * 收藏夹信息接口 (用户只有一个收藏夹)
  * @typedef {Object} FavoriteInfo
  * @property {string} id - 收藏夹唯一标识
  * @property {string} userId - 所属用户ID
  * @property {string} name - 收藏夹名称
  * @property {string} description - 收藏夹描述
- * @property {boolean} isPublic - 是否公开
  * @property {number} resourceCount - 资源数量
  * @property {string} createdAt - 创建时间
  * @property {string} updatedAt - 更新时间

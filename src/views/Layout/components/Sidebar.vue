@@ -11,31 +11,31 @@
       active-text-color="#2b6cb6"
       router
     >
-      <el-menu-item index="1">
+      <el-menu-item index="/home">
         <el-icon><grid /></el-icon>
         <span>课程概览</span>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="/favorite">
         <el-icon><collection /></el-icon>
         <span>收藏夹</span>
       </el-menu-item>
-      <el-menu-item index="3" disabled>
+      <el-menu-item index="/upload" disabled>
         <el-icon><upload /></el-icon>
         <span>页面上传</span>
       </el-menu-item>
-      <el-menu-item index="4" disabled>
+      <el-menu-item index="/iteration" disabled>
         <el-icon><cpu /></el-icon>
         <span>迭代功能</span>
       </el-menu-item>
-      <el-menu-item index="5">
+      <el-menu-item index="/history">
         <el-icon><tickets /></el-icon>
         <span>版本记录</span>
       </el-menu-item>
-      <el-menu-item index="6">
+      <el-menu-item index="/help">
         <el-icon><question-filled /></el-icon>
         <span>帮助文档</span>
       </el-menu-item>
-      <el-menu-item index="7">
+      <el-menu-item index="/profile">
         <el-icon><user /></el-icon>
         <span>个人中心</span>
       </el-menu-item>

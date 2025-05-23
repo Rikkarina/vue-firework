@@ -114,7 +114,52 @@ const registerResponse = (req) => {
   }
 }
 
+// 模拟用户收藏夹数据
+const userFavorite = {
+  id: 'fav_user1',
+  userId: 'user1',
+  name: '我的默认收藏夹',
+  description: '这是我的收藏夹',
+  isPublic: false,
+  resourceCount: 2,
+  createdAt: '2023-10-27 10:00:00',
+  updatedAt: '2023-10-27 10:00:00',
+  resources: [
+    {
+      id: 'res1',
+      resourceId: 'file1',
+      resourceName: '课程PPT第一章',
+      resourceType: 'ppt',
+      createdAt: '2023-10-27 10:00:00',
+    },
+    {
+      id: 'res2',
+      resourceId: 'file2',
+      resourceName: '软件安装包',
+      resourceType: 'zip',
+      createdAt: '2023-10-27 10:05:00',
+    },
+  ],
+}
+
 mockData.push(
+  {
+    url: '/api/user',
+    method: 'GET',
+    response: () => {
+      return {
+        code: 200,
+        message: 'success',
+        data: {
+          name: 'John Doe',
+          age: 30,
+          avatar: 'https://example.com/avatar.jpg',
+          email: 'john@example.com',
+          role: 'user',
+        },
+      }
+    },
+  },
   {
     url: '/api/auth/login',
     method: 'POST',
@@ -124,6 +169,18 @@ mockData.push(
     url: '/api/auth/register',
     method: 'POST',
     response: registerResponse,
+  },
+  // 模拟获取用户收藏夹接口
+  {
+    url: '/api/favorite',
+    method: 'GET',
+    response: () => {
+      return {
+        code: 200,
+        message: 'success',
+        data: userFavorite,
+      }
+    },
   },
 )
 export default mockData

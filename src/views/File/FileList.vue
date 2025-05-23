@@ -48,6 +48,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getCourseFiles, searchFiles } from '@/apis/file'
+import { getFavorite } from '@/apis/favorite'
 import { FileType, FileCategory, FileFormat } from '@/types/fileTypes'
 import { Document, Picture, Files, Collection } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -60,9 +61,13 @@ const selectedCategory = ref('')
 
 // 根据路由参数判断是课程文件还是搜索结果
 const isSearchResult = computed(() => route.name === 'FileSearch')
+const isFavorite = computed(() => route.name === 'Favorite')
 const pageTitle = computed(() => {
   if (isSearchResult.value) {
     return `搜索结果：${route.query.keyword || ''}`
+  }
+  if (isFavorite.value) {
+    return '我的收藏'
   }
   return '课程文件'
 })
@@ -74,6 +79,9 @@ const fetchFileList = async () => {
     if (isSearchResult.value) {
       const { data } = await searchFiles(route.query.keyword)
       fileList.value = data
+    } else if (isFavorite.value) {
+      const { data } = await getFavorite()
+      fileList.value = data.resources || []
     } else {
       const { data } = await getCourseFiles(route.params.courseId)
       fileList.value = data
