@@ -5,7 +5,7 @@ const files = [
     courseId: 101,
     title: 'Python基础语法PPT',
     type: '课件',
-    size: '2.5MB',
+    size: 2621440, // 2.5MB = 2.5 * 1024 * 1024
     uploadTime: '2024-03-15',
     downloadCount: 156,
     url: '/files/python-basic.pptx',
@@ -15,7 +15,7 @@ const files = [
     courseId: 101,
     title: 'Python编程练习题',
     type: '习题',
-    size: '1.2MB',
+    size: 1258291, // 1.2MB = 1.2 * 1024 * 1024
     uploadTime: '2024-03-14',
     downloadCount: 89,
     url: '/files/python-exercises.pdf',
@@ -25,7 +25,7 @@ const files = [
     courseId: 102,
     title: '数据结构与算法讲义',
     type: '课件',
-    size: '3.8MB',
+    size: 3984589, // 3.8MB = 3.8 * 1024 * 1024
     uploadTime: '2024-03-13',
     downloadCount: 234,
     url: '/files/ds-algo-notes.pdf',
