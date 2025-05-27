@@ -50,30 +50,3 @@ export function removeFromFavorite(resourceId) {
     method: 'delete',
   })
 }
-
-/**
- * 获取公开收藏夹列表
- * @param {Object} params 查询参数
- * @param {number} params.page - 页码
- * @param {number} params.pageSize - 每页数量
- * @returns {Promise}
- */
-export function getPublicFavorites(params) {
-  return request({
-    url: '/api/favorites/public',
-    method: 'get',
-    params,
-  })
-}
-
-/**
- * 获取指定公开收藏夹的资源列表
- * @param {string} userId - 用户ID
- * @returns {Promise}
- */
-export function getPublicFavoriteResources(userId) {
-  return request({
-    url: `/api/favorites/public/${userId}/resources`,
-    method: 'get',
-  })
-}
