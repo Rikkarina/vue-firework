@@ -127,17 +127,17 @@ const userFavorite = {
   resources: [
     {
       id: 'res1',
-      resourceId: 'file1',
-      resourceName: '课程PPT第一章',
-      resourceType: 'ppt',
-      createdAt: '2023-10-27 10:00:00',
+      title: '课程PPT第一章',
+      fileType: 'ppt',
+      size: 5242880, // 5MB
+      uploadTime: '2023-10-27',
     },
     {
       id: 'res2',
-      resourceId: 'file2',
-      resourceName: '软件安装包',
-      resourceType: 'zip',
-      createdAt: '2023-10-27 10:05:00',
+      title: '软件安装包',
+      fileType: 'zip',
+      size: 10485760, // 10MB
+      uploadTime: '2023-10-27',
     },
   ],
 }
