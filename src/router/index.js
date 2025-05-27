@@ -37,6 +37,13 @@ const routes = [
         component: () => import('@/views/File/FileList.vue'),
         meta: { title: '搜索结果', requiresAuth: true },
       },
+      // 收藏夹页面
+      {
+        path: 'favorite',
+        name: 'Favorite',
+        component: () => import('@/views/File/FileList.vue'),
+        meta: { title: '我的收藏', requiresAuth: true },
+      },
     ],
   },
 
