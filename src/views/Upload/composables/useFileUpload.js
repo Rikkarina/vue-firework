@@ -1,11 +1,14 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { uploadFile } from '@/apis/file' // 导入上传文件API
+import { useRouter } from 'vue-router' // 导入 useRouter
 
 export function useFileUpload() {
   const formRef = ref(null)
   const fileList = ref([])
   const uploading = ref(false)
+
+  const router = useRouter() // 获取路由器实例
 
   // 表单数据
   const formData = reactive({
@@ -72,6 +75,7 @@ export function useFileUpload() {
         // 根据实际API返回判断
         ElMessage.success('文件上传成功')
         resetForm() // 上传成功后重置表单
+        router.push('/') // 上传成功后跳转到首页
       } else {
         ElMessage.error(response.message || '文件上传失败') // 根据实际API返回获取错误信息
       }
