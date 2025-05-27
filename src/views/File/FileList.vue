@@ -20,25 +20,16 @@
     <div class="file-content" v-loading="loading">
       <el-empty v-if="!loading && fileList.length === 0" description="暂无文件" />
       <div v-else class="file-grid">
-        <el-card
+        <file-card
           v-for="file in fileList"
           :key="file.id"
-          class="file-card"
-          @click="handleFileClick(file)"
-        >
-          <div class="file-icon">
-            <el-icon :size="32">
-              <component :is="getFileIcon(file.fileType)" />
-            </el-icon>
-          </div>
-          <div class="file-info">
-            <div class="file-title">{{ file.title }}</div>
-            <div class="file-meta">
-              <span>{{ formatFileSize(file.size) }}</span>
-              <span>{{ file.uploadTime }}</span>
-            </div>
-          </div>
-        </el-card>
+          :id="file.id"
+          :title="file.title"
+          :file-type="file.fileType"
+          :size="file.size"
+          :upload-time="file.uploadTime"
+          @click="handleFileClick"
+        />
       </div>
     </div>
   </div>
@@ -49,8 +40,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getCourseFiles, searchFiles } from '@/apis/file'
 import { getFavorite } from '@/apis/favorite'
-import { FileType, FileCategory, FileFormat } from '@/types/fileTypes'
-import { Document, Picture, Files, Collection } from '@element-plus/icons-vue'
+import { FileType, FileCategory } from '@/types/fileTypes'
+import FileCard from '@/components/FileCard.vue'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -91,33 +82,6 @@ const fetchFileList = async () => {
     ElMessage.error('获取文件列表失败')
   } finally {
     loading.value = false
-  }
-}
-
-// 获取文件图标
-const getFileIcon = (fileType) => {
-  switch (fileType) {
-    case FileFormat.PDF:
-      return Document
-    case FileFormat.IMAGE:
-      return Picture
-    case FileFormat.CODE:
-      return Files
-    default:
-      return Collection
-  }
-}
-
-// 格式化文件大小
-const formatFileSize = (size) => {
-  if (size < 1024) {
-    return size + 'B'
-  } else if (size < 1024 * 1024) {
-    return (size / 1024).toFixed(2) + 'KB'
-  } else if (size < 1024 * 1024 * 1024) {
-    return (size / (1024 * 1024)).toFixed(2) + 'MB'
-  } else {
-    return (size / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
   }
 }
 

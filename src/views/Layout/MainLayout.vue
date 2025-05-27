@@ -9,7 +9,7 @@ import Sidebar from '@/views/Layout/components/Sidebar.vue'
       <Sidebar />
       <el-container class="main-vertical-container">
         <Header />
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </el-container>
     </el-container>
   </div>
