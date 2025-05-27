@@ -19,9 +19,9 @@
         <el-icon><collection /></el-icon>
         <span>收藏夹</span>
       </el-menu-item>
-      <el-menu-item index="/upload" disabled>
+      <el-menu-item index="/upload">
         <el-icon><upload /></el-icon>
-        <span>页面上传</span>
+        <span>文件上传</span>
       </el-menu-item>
       <el-menu-item index="/iteration" disabled>
         <el-icon><cpu /></el-icon>
