@@ -1,3 +1,41 @@
+<script setup>
+import { onMounted } from 'vue'
+import { UploadFilled } from '@element-plus/icons-vue'
+import { FileType, FileCategory } from '@/types/fileTypes'
+import { useCourseSelect } from '@/views/Upload/composables/useCourseSelect'
+import { useFileUpload } from '@/views/Upload/composables/useFileUpload'
+
+// 使用课程选择相关的 composable
+const { courseLoading, filteredCourses, handleCourseSearch, fetchCourses } = useCourseSelect()
+
+// 使用文件上传相关的 composable
+const {
+  formRef,
+  formData,
+  rules,
+  fileList,
+  uploading,
+  handleFileChange,
+  handleFileRemove,
+  handleExceed,
+  submitUpload,
+  resetForm,
+} = useFileUpload()
+
+// 处理课程选择变化，因为使用到了formData所以不封装在useCourseSelect中
+const handleCourseChange = (courseId) => {
+  const selectedCourse = filteredCourses.value.find((course) => course.id === courseId)
+  if (selectedCourse) {
+    formData.courseName = selectedCourse.name
+  }
+}
+
+// 组件挂载时获取课程列表
+onMounted(() => {
+  fetchCourses()
+})
+</script>
+
 <template>
   <div class="upload-page">
     <el-card class="upload-card">
@@ -68,6 +106,8 @@
             :auto-upload="false"
             :on-change="handleFileChange"
             :on-remove="handleFileRemove"
+            :limit="1"
+            :on-exceed="handleExceed"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -87,43 +127,6 @@
     </el-card>
   </div>
 </template>
-
-<script setup>
-import { onMounted } from 'vue'
-import { UploadFilled } from '@element-plus/icons-vue'
-import { FileType, FileCategory } from '@/types/fileTypes'
-import { useCourseSelect } from '@/views/Upload/composables/useCourseSelect'
-import { useFileUpload } from '@/views/Upload/composables/useFileUpload'
-
-// 使用课程选择相关的 composable
-const { courseLoading, filteredCourses, handleCourseSearch, fetchCourses } = useCourseSelect()
-
-// 使用文件上传相关的 composable
-const {
-  formRef,
-  formData,
-  rules,
-  fileList,
-  uploading,
-  handleFileChange,
-  handleFileRemove,
-  submitUpload,
-  resetForm,
-} = useFileUpload()
-
-// 处理课程选择变化
-const handleCourseChange = (courseId) => {
-  const selectedCourse = filteredCourses.value.find((course) => course.id === courseId)
-  if (selectedCourse) {
-    formData.courseName = selectedCourse.name
-  }
-}
-
-// 组件挂载时获取课程列表
-onMounted(() => {
-  fetchCourses()
-})
-</script>
 
 <style scoped>
 .upload-page {

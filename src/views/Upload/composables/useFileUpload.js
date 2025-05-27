@@ -1,5 +1,6 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
+import { uploadFile } from '@/apis/file' // 导入上传文件API
 
 export function useFileUpload() {
   const formRef = ref(null)
@@ -24,14 +25,27 @@ export function useFileUpload() {
   }
 
   // 处理文件变化
-  const handleFileChange = (file) => {
+  const handleFileChange = (uploadFile) => {
     // 可以在这里添加文件类型和大小的验证
-    console.log('文件变化：', file)
+    console.log('文件变化：', uploadFile)
+    // 在单文件模式下，on-change只会在添加新文件时触发一次
+    // 我们需要确保fileList中始终只有一个文件
+    fileList.value = [uploadFile]
   }
 
   // 处理文件移除
-  const handleFileRemove = (file) => {
-    console.log('文件移除：', file)
+  const handleFileRemove = (uploadFile) => {
+    console.log('文件移除：', uploadFile)
+    // 清空fileList
+    fileList.value = []
+  }
+
+  // 处理超出文件限制
+  const handleExceed = (files) => {
+    ElMessage.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，将覆盖原有文件`) // 提示用户
+    fileList.value = [files[0]] // 替换为新选择的文件
+    // 如果需要触发on-change的逻辑，可以手动调用
+    // handleFileChange(files[0]) // 如果handleFileChange有额外逻辑需要执行的话
   }
 
   // 提交上传
@@ -48,19 +62,24 @@ export function useFileUpload() {
 
       uploading.value = true
 
-      // TODO: 实现文件上传逻辑
-      const uploadData = {
+      // 调用上传文件API
+      const response = await uploadFile({
         ...formData,
-        file: fileList.value[0].raw,
-      }
+        file: fileList.value[0].raw, // 获取单个文件的原始File对象
+      })
 
-      console.log('上传数据：', uploadData)
-      ElMessage.success('文件上传成功')
+      if (response.code === 200) {
+        // 根据实际API返回判断
+        ElMessage.success('文件上传成功')
+        resetForm() // 上传成功后重置表单
+      } else {
+        ElMessage.error(response.message || '文件上传失败') // 根据实际API返回获取错误信息
+      }
     } catch (error) {
-      console.error('表单验证失败：', error)
-      ElMessage.error('请检查表单填写是否正确')
+      console.error('文件上传或表单验证失败：', error)
+      ElMessage.error('文件上传失败，请稍后重试')
     } finally {
-      uploading.value = false
+      uploading.value = false // 请求完成（无论成功或失败）后设置 loading 为 false
     }
   }
 
@@ -68,7 +87,7 @@ export function useFileUpload() {
   const resetForm = () => {
     if (!formRef.value) return
     formRef.value.resetFields()
-    fileList.value = []
+    fileList.value = [] // 清空文件列表
   }
 
   return {
@@ -79,6 +98,7 @@ export function useFileUpload() {
     uploading,
     handleFileChange,
     handleFileRemove,
+    handleExceed, // 导出handleExceed方法
     submitUpload,
     resetForm,
   }
