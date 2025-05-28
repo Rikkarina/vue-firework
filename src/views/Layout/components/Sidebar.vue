@@ -44,8 +44,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import {
   Grid,
   Collection,
@@ -57,7 +57,10 @@ import {
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
-const activeIndex = ref('1')
+const route = useRoute()
+
+// 根据当前路由路径计算激活的菜单项
+const activeIndex = computed(() => route.path)
 
 const handleLogoClick = () => {
   router.push('/home')
