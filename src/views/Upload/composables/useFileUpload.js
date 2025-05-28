@@ -1,14 +1,16 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
-import { uploadFile } from '@/apis/file' // 导入上传文件API
-import { useRouter } from 'vue-router' // 导入 useRouter
+import { uploadChunk, mergeChunks } from '@/apis/file'
+import { useRouter } from 'vue-router'
+import { FileChunk } from '@/utils/fileChunk'
 
 export function useFileUpload() {
   const formRef = ref(null)
   const fileList = ref([])
   const uploading = ref(false)
+  const uploadProgress = ref(0) // 添加上传进度
 
-  const router = useRouter() // 获取路由器实例
+  const router = useRouter()
 
   // 表单数据
   const formData = reactive({
@@ -29,26 +31,53 @@ export function useFileUpload() {
 
   // 处理文件变化
   const handleFileChange = (uploadFile) => {
-    // 可以在这里添加文件类型和大小的验证
-    console.log('文件变化：', uploadFile)
-    // 在单文件模式下，on-change只会在添加新文件时触发一次
-    // 我们需要确保fileList中始终只有一个文件
+    // 只保留文件大小限制（可选）
+    const maxSize = 1024 * 1024 * 1024 // 1GB
+    if (uploadFile.raw.size > maxSize) {
+      ElMessage.error('文件大小不能超过 1GB')
+      return
+    }
+
     fileList.value = [uploadFile]
   }
 
   // 处理文件移除
-  const handleFileRemove = (uploadFile) => {
-    console.log('文件移除：', uploadFile)
-    // 清空fileList
+  const handleFileRemove = () => {
     fileList.value = []
   }
 
   // 处理超出文件限制
   const handleExceed = (files) => {
-    ElMessage.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，将覆盖原有文件`) // 提示用户
-    fileList.value = [files[0]] // 替换为新选择的文件
-    // 如果需要触发on-change的逻辑，可以手动调用
-    // handleFileChange(files[0]) // 如果handleFileChange有额外逻辑需要执行的话
+    ElMessage.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，将覆盖原有文件`)
+    fileList.value = [files[0]]
+  }
+
+  // 上传分片
+  const uploadChunks = async (chunks, fileInfo) => {
+    const totalChunks = chunks.length
+    let uploadedChunks = 0
+
+    for (const chunk of chunks) {
+      const formData = new FormData()
+      formData.append('chunk', chunk.file)
+      formData.append('chunkIndex', chunk.index)
+      formData.append('fileName', fileInfo.name)
+      formData.append('title', fileInfo.title)
+      formData.append('type', fileInfo.type)
+      formData.append('category', fileInfo.category)
+      formData.append('courseId', fileInfo.courseId)
+      formData.append('courseName', fileInfo.courseName)
+
+      try {
+        await uploadChunk(formData)
+        uploadedChunks++
+        // 更新上传进度
+        uploadProgress.value = Math.floor((uploadedChunks / totalChunks) * 100)
+      } catch (error) {
+        console.error('分片上传失败：', error)
+        throw error
+      }
+    }
   }
 
   // 提交上传
@@ -64,26 +93,40 @@ export function useFileUpload() {
       }
 
       uploading.value = true
+      uploadProgress.value = 0
 
-      // 调用上传文件API
-      const response = await uploadFile({
+      const file = fileList.value[0].raw
+
+      // 1. 创建文件分片
+      const fileChunk = new FileChunk(file)
+      const chunks = fileChunk.createFileChunks()
+
+      // 2. 上传分片
+      await uploadChunks(chunks, {
+        name: file.name,
         ...formData,
-        file: fileList.value[0].raw, // 获取单个文件的原始File对象
       })
 
+      // 3. 合并分片
+      const mergeData = {
+        fileName: file.name,
+        ...formData,
+      }
+
+      const response = await mergeChunks(mergeData)
+
       if (response.code === 200) {
-        // 根据实际API返回判断
         ElMessage.success('文件上传成功')
-        resetForm() // 上传成功后重置表单
-        router.push('/') // 上传成功后跳转到首页
+        resetForm()
+        router.push('/')
       } else {
-        ElMessage.error(response.message || '文件上传失败') // 根据实际API返回获取错误信息
+        ElMessage.error(response.message || '文件上传失败')
       }
     } catch (error) {
-      console.error('文件上传或表单验证失败：', error)
+      console.error('文件上传失败：', error)
       ElMessage.error('文件上传失败，请稍后重试')
     } finally {
-      uploading.value = false // 请求完成（无论成功或失败）后设置 loading 为 false
+      uploading.value = false
     }
   }
 
@@ -91,7 +134,8 @@ export function useFileUpload() {
   const resetForm = () => {
     if (!formRef.value) return
     formRef.value.resetFields()
-    fileList.value = [] // 清空文件列表
+    fileList.value = []
+    uploadProgress.value = 0
   }
 
   return {
@@ -100,9 +144,10 @@ export function useFileUpload() {
     rules,
     fileList,
     uploading,
+    uploadProgress,
     handleFileChange,
     handleFileRemove,
-    handleExceed, // 导出handleExceed方法
+    handleExceed,
     submitUpload,
     resetForm,
   }

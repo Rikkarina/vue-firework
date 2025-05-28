@@ -20,6 +20,7 @@ const {
   handleExceed,
   submitUpload,
   resetForm,
+  uploadProgress,
 } = useFileUpload()
 
 // 处理课程选择变化，因为使用到了formData所以不封装在useCourseSelect中
@@ -112,9 +113,15 @@ onMounted(() => {
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             <template #tip>
-              <div class="el-upload__tip">支持任意类型文件上传</div>
+              <div class="el-upload__tip">支持任意类型文件上传，单个文件最大支持1GB</div>
             </template>
           </el-upload>
+
+          <el-progress
+            v-if="uploading"
+            :percentage="uploadProgress"
+            :status="uploadProgress === 100 ? 'success' : ''"
+          />
         </el-form-item>
 
         <el-form-item>
@@ -128,84 +135,81 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+$primary-color: #303133;
+$text-color: #909399;
+$placeholder-color: #a8abb2;
+$font-size-base: 14px;
+$font-size-small: 12px;
+
 .upload-page {
   padding: 20px;
-}
 
-.upload-card {
-  max-width: 800px;
-  margin: 0 auto;
-}
+  .upload-card {
+    max-width: 800px;
+    margin: 0 auto;
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-.card-header h2 {
-  margin: 0;
-  font-size: 1.5em;
-  color: #303133;
-}
+      h2 {
+        margin: 0;
+        font-size: 1.5em;
+        color: $primary-color;
+      }
+    }
 
-.upload-form {
-  margin-top: 20px;
-}
+    .upload-form {
+      margin-top: 20px;
 
-.upload-form :deep(.el-select) {
-  width: 100%;
-}
+      :deep(.el-select) {
+        width: 100%;
+      }
 
-.upload-demo {
-  width: 100%;
-}
+      :deep(.el-input__inner),
+      :deep(.el-select__input),
+      :deep(.el-textarea__inner) {
+        &::placeholder {
+          color: $placeholder-color !important;
+          font-size: $font-size-base !important;
+          font-weight: normal !important;
+        }
 
-:deep(.el-upload-dragger) {
-  width: 100%;
-}
+        &::-webkit-input-placeholder {
+          color: $placeholder-color !important;
+          font-size: $font-size-base !important;
+          font-weight: normal !important;
+        }
 
-.el-upload__tip {
-  color: #909399;
-  font-size: 12px;
-  margin-top: 7px;
-}
+        &:-ms-input-placeholder {
+          color: $placeholder-color !important;
+          font-size: $font-size-base !important;
+          font-weight: normal !important;
+        }
 
-/* 统一el-input和el-select的placeholder样式 */
-.upload-form :deep(.el-input__inner::placeholder),
-.upload-form :deep(.el-select__input::placeholder),
-.upload-form :deep(.el-textarea__inner::placeholder) {
-  /* 标准语法 */
-  color: #a8abb2 !important;
-  font-size: 14px !important;
-  font-weight: normal !important;
-}
+        &::-ms-input-placeholder {
+          color: $placeholder-color !important;
+          font-size: $font-size-base !important;
+          font-weight: normal !important;
+        }
+      }
 
-.upload-form :deep(.el-input__inner::-webkit-input-placeholder),
-.upload-form :deep(.el-select__input::-webkit-input-placeholder),
-.upload-form :deep(.el-textarea__inner::-webkit-input-placeholder) {
-  /* Chrome, Safari */
-  color: #a8abb2 !important;
-  font-size: 14px !important;
-  font-weight: normal !important;
-}
+      .upload-demo {
+        width: 100%;
+      }
 
-.upload-form :deep(.el-input__inner:-ms-input-placeholder),
-.upload-form :deep(.el-select__input:-ms-input-placeholder),
-.upload-form :deep(.el-textarea__inner:-ms-input-placeholder) {
-  /* IE 10+ */
-  color: #a8abb2 !important;
-  font-size: 14px !important;
-  font-weight: normal !important;
-}
+      :deep(.el-upload-dragger) {
+        width: 100%;
+      }
 
-.upload-form :deep(.el-input__inner::-ms-input-placeholder),
-.upload-form :deep(.el-select__input::-ms-input-placeholder),
-.upload-form :deep(.el-textarea__inner::-ms-ms-input-placeholder) {
-  /* Edge */
-  color: #a8abb2 !important;
-  font-size: 14px !important;
-  font-weight: normal !important;
+      .el-upload__tip {
+        color: $text-color;
+        font-size: $font-size-small;
+        margin-top: 7px;
+      }
+    }
+  }
 }
 </style>

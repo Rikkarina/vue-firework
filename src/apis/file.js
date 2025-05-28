@@ -17,20 +17,23 @@ export const searchFiles = (keyword) => {
   })
 }
 
-// 上传文件
-export const uploadFile = (formData) => {
-  const data = new FormData()
-  // 将文件和其他表单数据添加到 FormData 对象中
-  data.append('file', formData.file)
-  data.append('title', formData.title)
-  data.append('type', formData.type)
-  data.append('category', formData.category)
-  data.append('courseId', formData.courseId)
-  data.append('courseName', formData.courseName)
-
+// 上传分片
+export const uploadChunk = (formData) => {
   return request({
-    url: '/api/files/upload',
+    url: '/api/files/chunk',
     method: 'POST',
-    data: data,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}
+
+// 合并分片
+export const mergeChunks = (data) => {
+  return request({
+    url: '/api/files/merge',
+    method: 'POST',
+    data,
   })
 }
