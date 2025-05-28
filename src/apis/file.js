@@ -29,12 +29,8 @@ export const uploadFile = (formData) => {
   data.append('courseName', formData.courseName)
 
   return request({
-    url: '/api/files/upload', // 假设的文件上传接口地址
+    url: '/api/files/upload',
     method: 'POST',
     data: data,
-    headers: {
-      // 通常需要设置 Content-Type，但request工具可能自动处理
-      'Content-Type': 'multipart/form-data',
-    },
   })
 }
