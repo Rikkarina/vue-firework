@@ -21,6 +21,10 @@ const {
   submitUpload,
   resetForm,
   uploadProgress,
+  handleProgress,
+  handleUploadSuccess,
+  handleUploadError,
+  beforeUpload,
 } = useFileUpload()
 
 // 处理课程选择变化，因为使用到了formData所以不封装在useCourseSelect中
@@ -103,12 +107,16 @@ onMounted(() => {
             v-model:file-list="fileList"
             class="upload-demo"
             drag
-            action="#"
-            :auto-upload="false"
+            action="/api/files/chunk"
+            :auto-upload="true"
             :on-change="handleFileChange"
             :on-remove="handleFileRemove"
+            :on-progress="handleProgress"
+            :on-success="handleUploadSuccess"
+            :on-error="handleUploadError"
             :limit="1"
             :on-exceed="handleExceed"
+            :before-upload="beforeUpload"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -125,8 +133,13 @@ onMounted(() => {
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitUpload" :loading="uploading">
-            上传文件
+          <el-button
+            type="primary"
+            @click="submitUpload"
+            :loading="uploading"
+            :disabled="!fileList.length || !fileList[0].status === 'success'"
+          >
+            保存文件信息
           </el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>

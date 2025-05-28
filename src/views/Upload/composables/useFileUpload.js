@@ -1,14 +1,14 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
-import { uploadChunk, mergeChunks } from '@/apis/file'
+import { mergeChunks } from '@/apis/file'
 import { useRouter } from 'vue-router'
-import { FileChunk } from '@/utils/fileChunk'
 
 export function useFileUpload() {
   const formRef = ref(null)
   const fileList = ref([])
   const uploading = ref(false)
-  const uploadProgress = ref(0) // 添加上传进度
+  const uploadProgress = ref(0)
+  const uploadedFile = ref(null)
 
   const router = useRouter()
 
@@ -35,15 +35,15 @@ export function useFileUpload() {
     const maxSize = 1024 * 1024 * 1024 // 1GB
     if (uploadFile.raw.size > maxSize) {
       ElMessage.error('文件大小不能超过 1GB')
-      return
+      return false
     }
-
-    fileList.value = [uploadFile]
   }
 
   // 处理文件移除
   const handleFileRemove = () => {
     fileList.value = []
+    uploadedFile.value = null
+    uploadProgress.value = 0
   }
 
   // 处理超出文件限制
@@ -52,79 +52,78 @@ export function useFileUpload() {
     fileList.value = [files[0]]
   }
 
-  // 上传分片
-  const uploadChunks = async (chunks, fileInfo) => {
-    const totalChunks = chunks.length
-    let uploadedChunks = 0
-
-    for (const chunk of chunks) {
-      const formData = new FormData()
-      formData.append('chunk', chunk.file)
-      formData.append('chunkIndex', chunk.index)
-      formData.append('fileName', fileInfo.name)
-      formData.append('title', fileInfo.title)
-      formData.append('type', fileInfo.type)
-      formData.append('category', fileInfo.category)
-      formData.append('courseId', fileInfo.courseId)
-      formData.append('courseName', fileInfo.courseName)
-
-      try {
-        await uploadChunk(formData)
-        uploadedChunks++
-        // 更新上传进度
-        uploadProgress.value = Math.floor((uploadedChunks / totalChunks) * 100)
-      } catch (error) {
-        console.error('分片上传失败：', error)
-        throw error
-      }
+  // 上传前检查
+  const beforeUpload = (file) => {
+    const maxSize = 1024 * 1024 * 1024 // 1GB
+    if (file.size > maxSize) {
+      ElMessage.error('文件大小不能超过 1GB')
+      return false
     }
+    uploading.value = true
+    uploadProgress.value = 0
+    return true
   }
 
-  // 提交上传
+  // 处理上传进度
+  const handleProgress = (event) => {
+    uploadProgress.value = Math.floor(event.percent)
+  }
+
+  // 处理上传成功
+  const handleUploadSuccess = (response, file) => {
+    if (response.code === 200) {
+      uploadedFile.value = {
+        name: file.name,
+        size: file.size,
+        ...response.data,
+      }
+      ElMessage.success('文件上传成功')
+    } else {
+      ElMessage.error(response.message || '文件上传失败')
+    }
+    uploading.value = false
+  }
+
+  // 处理上传失败
+  const handleUploadError = (error) => {
+    console.error('文件上传失败：', error)
+    ElMessage.error('文件上传失败，请重试')
+    uploading.value = false
+  }
+
+  // 提交上传（保存文件信息）
   const submitUpload = async () => {
     if (!formRef.value) return
 
     try {
       await formRef.value.validate()
 
-      if (fileList.value.length === 0) {
-        ElMessage.warning('请选择要上传的文件')
+      if (!uploadedFile.value) {
+        ElMessage.warning('请先上传文件')
         return
       }
 
       uploading.value = true
-      uploadProgress.value = 0
 
-      const file = fileList.value[0].raw
-
-      // 1. 创建文件分片
-      const fileChunk = new FileChunk(file)
-      const chunks = fileChunk.createFileChunks()
-
-      // 2. 上传分片
-      await uploadChunks(chunks, {
-        name: file.name,
-        ...formData,
-      })
-
-      // 3. 合并分片
+      // 合并分片
       const mergeData = {
-        fileName: file.name,
+        fileName: uploadedFile.value.name,
+        fileSize: uploadedFile.value.size,
         ...formData,
       }
 
       const response = await mergeChunks(mergeData)
 
       if (response.code === 200) {
-        ElMessage.success('文件上传成功')
+        ElMessage.success('文件信息保存成功')
         resetForm()
         router.push('/')
       } else {
-        ElMessage.error(response.message || '文件上传失败')
+        ElMessage.error(response.message || '文件信息保存失败')
       }
     } catch (error) {
-      console.error('文件上传失败：', error)
-      ElMessage.error('文件上传失败，请稍后重试')
+      console.error('保存文件信息失败：', error)
+      ElMessage.error('保存文件信息失败，请稍后重试')
     } finally {
       uploading.value = false
     }
@@ -135,6 +134,7 @@ export function useFileUpload() {
     if (!formRef.value) return
     formRef.value.resetFields()
     fileList.value = []
+    uploadedFile.value = null
     uploadProgress.value = 0
   }
 
@@ -150,5 +150,9 @@ export function useFileUpload() {
     handleExceed,
     submitUpload,
     resetForm,
+    handleProgress,
+    handleUploadSuccess,
+    handleUploadError,
+    beforeUpload,
   }
 }
