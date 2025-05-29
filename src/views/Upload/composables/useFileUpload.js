@@ -91,7 +91,7 @@ export function useFileUpload() {
     uploading.value = false
   }
 
-  // 提交上传（保存文件信息）
+  // 提交上传（保存文件信息，不包含文件本身）
   const submitUpload = async () => {
     if (!formRef.value) return
 
