@@ -2,7 +2,10 @@
 import { onMounted } from 'vue'
 // 导入并使用 useFileList Composable
 import { useFileList } from '@/views/File/composables/useFileList'
+import { useFileDownload } from '@/views/File/composables/useFileDownload'
+// import { useFilePreview } from '@/views/File/composables/useFilePreview' // 暂时注释预览 composable
 import FileCard from '@/components/FileCard.vue'
+// import FilePreviewModal from '@/views/File/FilePreviewModal.vue' // 暂时注释预览模态框
 
 const {
   loading,
@@ -11,10 +14,29 @@ const {
   selectedCategory,
   pageTitle,
   fetchFileList,
-  handleFileClick,
+  // handleFileCardClick, // 不从 useFileList 导出，自己实现点击逻辑
   FileType,
   FileCategory,
 } = useFileList()
+
+const { startDownload, downloadLoading } = useFileDownload() // 引入 downloadLoading
+// const { // 暂时注释预览 composable 的使用
+//   isPreviewModalVisible,
+//   previewFile,
+//   previewUrl,
+//   previewLoading,
+//   openPreviewModal,
+//   closePreviewModal,
+// } = useFilePreview()
+
+// 处理文件卡片点击事件，只触发下载
+const handleFileCardClick = (file) => {
+  // 阻止重复点击或在加载时点击
+  if (downloadLoading.value) {
+    return
+  }
+  startDownload(file)
+}
 
 onMounted(() => {
   fetchFileList()
@@ -51,7 +73,8 @@ onMounted(() => {
           :file-type="file.fileType"
           :size="file.size"
           :upload-time="file.uploadTime"
-          @click="handleFileClick(file)"
+          @click="handleFileCardClick(file)"
+          :loading="downloadLoading"
         />
       </div>
     </div>
