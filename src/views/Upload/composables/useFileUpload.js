@@ -73,7 +73,7 @@ export function useFileUpload() {
   const handleUploadSuccess = (response, file) => {
     if (response.code === 200) {
       uploadedFile.value = {
-        name: file.name,
+        name: response.data.fileName,
         size: file.size,
         ...response.data,
       }

@@ -3,7 +3,7 @@ import request from '@/utils/http'
 // 获取课程文件列表
 export const getCourseFiles = (courseId) => {
   return request({
-    url: `/api/courses/${courseId}/files`,
+    url: `/api/files/courses/${courseId}/files`,
     method: 'GET',
   })
 }

@@ -2,8 +2,10 @@ import express from 'express'
 import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import fileRoutes from './routes/file.js'
 import process from 'process'
+import fileRoutes from './routes/file.js'
+import userRoutes from './routes/user.js'
+import departmentRoutes from './routes/department.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -16,13 +18,24 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // 静态文件服务
-app.use('/files', express.static(path.join(__dirname, '../files')))
+app.use('/static', express.static(path.join(__dirname, '../files')))
 
 // 注册路由
 app.use('/api/files', fileRoutes)
+app.use('/api/user', userRoutes)
+app.use('/api/departments', departmentRoutes)
+
+// 404 处理中间件
+app.use((req, res) => {
+  res.status(404).json({
+    code: 404,
+    message: '请求的资源不存在',
+    data: null,
+  })
+})
 
 // 错误处理中间件
-app.use((err, _req, res) => {
+app.use((err, req, res) => {
   console.error(err.stack)
   res.status(500).json({
     code: 500,
