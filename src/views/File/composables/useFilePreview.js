@@ -23,7 +23,7 @@ export function useFilePreview() {
       // 这里我们仍然使用 downloadFile API 来获取 Blob 数据
       const response = await downloadFile(file.id)
       const blob = response.data
-      previewUrl.value = window.URL.createObjectURL(blob)
+      previewUrl.value = window.URL.createObjectURL(blob) + '#zoom=fit'
     } catch (error) {
       console.error('加载预览文件失败：', error)
       ElMessage.error('加载预览文件失败')

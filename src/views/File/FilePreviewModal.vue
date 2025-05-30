@@ -1,25 +1,3 @@
-<template>
-  <el-dialog
-    :model-value="isVisible"
-    :title="previewFile ? `预览: ${previewFile.title}` : '文件预览'"
-    :fullscreen="true"
-    @closed="handleClose"
-    @update:model-value="handleUpdateModelValue"
-    destroy-on-close
-  >
-    <div v-loading="loading" class="preview-content">
-      <div v-if="!previewUrl && !loading" class="empty-preview">
-        <el-empty description="无法预览该文件类型或加载失败" />
-      </div>
-      <iframe v-else-if="isPDF" :src="previewUrl" frameborder="0"></iframe>
-      <img v-else-if="isImage" :src="previewUrl" alt="文件预览" />
-      <div v-else class="unsupported-preview">
-        <el-empty description="该文件类型暂不支持在线预览" />
-      </div>
-    </div>
-  </el-dialog>
-</template>
-
 <script setup>
 import { computed, watch } from 'vue'
 import { ElDialog, ElEmpty } from 'element-plus'
@@ -78,25 +56,64 @@ const handleUpdateModelValue = (value) => {
 }
 </script>
 
-<style scoped>
-.preview-content {
+<template>
+  <el-dialog
+    :model-value="isVisible"
+    :title="previewFile ? `预览: ${previewFile.title}` : '文件预览'"
+    :fullscreen="false"
+    width="80%"
+    style="max-height: 90vh"
+    :body-style="{ padding: '0px', height: 'calc(90vh - 54px - 60px)' }"
+    @closed="handleClose"
+    @update:model-value="handleUpdateModelValue"
+    destroy-on-close
+  >
+    <div class="dialog-body-container">
+      <div v-loading="loading" class="preview-content">
+        <div v-if="!previewUrl && !loading" class="empty-preview">
+          <el-empty description="无法预览该文件类型或加载失败" />
+        </div>
+        <iframe v-else-if="isPDF" :src="previewUrl" frameborder="0"></iframe>
+        <img v-else-if="isImage" :src="previewUrl" alt="文件预览" />
+        <div v-else class="unsupported-preview">
+          <el-empty description="该文件类型暂不支持在线预览" />
+        </div>
+      </div>
+    </div>
+  </el-dialog>
+</template>
+
+<style lang="scss" scoped>
+.dialog-body-container {
   width: 100%;
-  height: calc(100vh - 110px); /* 减去 dialog 头部和底部的高度 */
+  height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  flex-direction: column;
 }
 
-.preview-content iframe,
-.preview-content img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+.preview-content {
+  width: 100%;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
+  iframe,
+  img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }
 
 .empty-preview,
 .unsupported-preview {
   text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
