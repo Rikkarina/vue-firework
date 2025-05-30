@@ -6,6 +6,12 @@ export function useFileDownload() {
   const downloadLoading = ref(false)
 
   const startDownload = async (file) => {
+    // 检查是否已经在下载中
+    if (downloadLoading.value) {
+      ElMessage.warning('文件正在下载中，请勿重复操作')
+      return
+    }
+
     downloadLoading.value = true
     try {
       const response = await downloadFile(file.id)
@@ -45,7 +51,8 @@ export function useFileDownload() {
       }, 100)
 
       ElMessage.success('文件下载成功')
-    } catch {
+    } catch (error) {
+      console.error('文件下载失败：', error)
       ElMessage.error('文件下载失败')
     } finally {
       downloadLoading.value = false

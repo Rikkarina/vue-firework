@@ -14,7 +14,6 @@ const {
   selectedCategory,
   pageTitle,
   fetchFileList,
-  // handleFileCardClick, // 不从 useFileList 导出，自己实现点击逻辑
   FileType,
   FileCategory,
 } = useFileList()
@@ -30,13 +29,6 @@ const { startDownload, downloadLoading } = useFileDownload() // 引入 downloadL
 // } = useFilePreview()
 
 // 处理文件卡片点击事件，只触发下载
-const handleFileCardClick = (file) => {
-  // 阻止重复点击或在加载时点击
-  if (downloadLoading.value) {
-    return
-  }
-  startDownload(file)
-}
 
 onMounted(() => {
   fetchFileList()
@@ -73,7 +65,7 @@ onMounted(() => {
           :file-type="file.fileType"
           :size="file.size"
           :upload-time="file.uploadTime"
-          @click="handleFileCardClick(file)"
+          @click="startDownload(file)"
           :loading="downloadLoading"
         />
       </div>
