@@ -89,14 +89,10 @@ const fetchFileList = async () => {
 const handleFileClick = async (file) => {
   try {
     loading.value = true
-    console.log('开始下载文件：', file)
     const response = await downloadFile(file.id)
-    console.log('收到响应：', response)
 
     // 直接使用 response.data，因为它已经是 Blob 了
     const blob = response.data
-    console.log('Blob类型：', blob.type)
-    console.log('Blob大小：', blob.size)
 
     // 从 Content-Disposition 获取文件名
     const contentDisposition = response.headers['content-disposition']
@@ -115,7 +111,6 @@ const handleFileClick = async (file) => {
     }
 
     const url = window.URL.createObjectURL(blob)
-    console.log('创建下载链接：', fileName)
 
     // 创建下载链接
     const link = document.createElement('a')
@@ -131,8 +126,7 @@ const handleFileClick = async (file) => {
     }, 100)
 
     ElMessage.success('文件下载成功')
-  } catch (error) {
-    console.error('文件下载失败：', error)
+  } catch {
     ElMessage.error('文件下载失败')
   } finally {
     loading.value = false
