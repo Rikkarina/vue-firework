@@ -66,7 +66,7 @@ const files = [
     size: 3984589, // 3.8MB = 3.8 * 1024 * 1024
     uploadTime: '2024-03-13',
     downloadCount: 234,
-    url: '/static/ds-algo-notes.pdf',
+    url: '/static/test.pdf',
   },
 ]
 
@@ -154,6 +154,69 @@ router.get('/search', (req, res) => {
     code: 200,
     message: '搜索成功',
     data: matchedFiles,
+  })
+})
+
+// 文件下载接口
+router.get('/download/:fileId', (req, res) => {
+  const { fileId } = req.params
+  console.log('收到下载请求，fileId:', fileId)
+
+  const file = files.find((f) => f.id.toString() === fileId)
+  if (!file) {
+    console.log('文件未找到，fileId:', fileId)
+    return res.status(404).send('文件不存在')
+  }
+  console.log('找到文件信息：', file)
+
+  const filePath = path.join(__dirname, '../../files', file.url.split('/static/')[1])
+  console.log('文件路径：', filePath)
+
+  // 检查文件是否存在
+  if (!fs.existsSync(filePath)) {
+    console.log('文件不存在于磁盘：', filePath)
+    return res.status(404).send('文件不存在')
+  }
+
+  // 设置响应头
+  const ext = path.extname(filePath)
+  const fileName = `${file.title}${ext}`
+  console.log('设置文件名：', fileName)
+  console.log('文件扩展名：', ext)
+  console.log('原始文件信息：', file)
+
+  // 使用 filename 而不是 filename*，因为某些客户端可能不支持 filename*
+  res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(fileName)}"`)
+
+  // 根据文件扩展名设置正确的 Content-Type
+  const mimeTypes = {
+    '.pdf': 'application/pdf',
+    '.doc': 'application/msword',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.zip': 'application/zip',
+    '.rar': 'application/x-rar-compressed',
+    '.txt': 'text/plain',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+  }
+
+  res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream')
+  console.log('开始发送文件流')
+
+  // 创建文件流并发送
+  const fileStream = fs.createReadStream(filePath)
+  fileStream.pipe(res)
+
+  // 错误处理
+  fileStream.on('error', (error) => {
+    console.error('文件下载错误：', error)
+    res.status(500).send('文件下载失败')
   })
 })
 

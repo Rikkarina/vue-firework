@@ -38,7 +38,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { getCourseFiles, searchFiles } from '@/apis/file'
+import { getCourseFiles, searchFiles, downloadFile } from '@/apis/file'
 import { getFavorite } from '@/apis/favorite'
 import { FileType, FileCategory } from '@/types/fileTypes'
 import FileCard from '@/components/FileCard.vue'
@@ -86,9 +86,57 @@ const fetchFileList = async () => {
 }
 
 // 处理文件点击
-const handleFileClick = (file) => {
-  // TODO: 实现文件预览或下载逻辑
-  console.log('点击文件：', file)
+const handleFileClick = async (file) => {
+  try {
+    loading.value = true
+    console.log('开始下载文件：', file)
+    const response = await downloadFile(file.id)
+    console.log('收到响应：', response)
+
+    // 直接使用 response.data，因为它已经是 Blob 了
+    const blob = response.data
+    console.log('Blob类型：', blob.type)
+    console.log('Blob大小：', blob.size)
+
+    // 从 Content-Disposition 获取文件名
+    const contentDisposition = response.headers['content-disposition']
+    let fileName = file.title
+    if (contentDisposition) {
+      const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition)
+      if (matches != null && matches[1]) {
+        fileName = decodeURIComponent(matches[1].replace(/['"]/g, ''))
+      }
+    }
+
+    // 如果没有扩展名，添加扩展名
+    if (!fileName.includes('.')) {
+      const ext = file.url.split('.').pop()
+      fileName = `${fileName}.${ext}`
+    }
+
+    const url = window.URL.createObjectURL(blob)
+    console.log('创建下载链接：', fileName)
+
+    // 创建下载链接
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+
+    // 清理
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
+    }, 100)
+
+    ElMessage.success('文件下载成功')
+  } catch (error) {
+    console.error('文件下载失败：', error)
+    ElMessage.error('文件下载失败')
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {

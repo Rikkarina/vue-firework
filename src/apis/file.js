@@ -37,3 +37,12 @@ export const mergeChunks = (data) => {
     data,
   })
 }
+
+// 下载文件
+export const downloadFile = (fileId) => {
+  return request({
+    url: `/api/files/download/${fileId}`,
+    method: 'GET',
+    responseType: 'blob',
+  })
+}
