@@ -44,6 +44,13 @@ const routes = [
         component: () => import('@/views/File/FileList.vue'),
         meta: { title: '我的收藏', requiresAuth: true },
       },
+      // 文件上传页面
+      {
+        path: 'upload',
+        name: 'Upload',
+        component: () => import('@/views/Upload/UploadPage.vue'),
+        meta: { title: '文件上传', requiresAuth: true },
+      },
     ],
   },
 

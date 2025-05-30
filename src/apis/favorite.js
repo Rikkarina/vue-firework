@@ -6,7 +6,7 @@ import request from '@/utils/http'
  */
 export function getFavorite() {
   return request({
-    url: '/api/favorite',
+    url: '/api/user/favorite',
     method: 'get',
   })
 }
@@ -20,7 +20,7 @@ export function getFavorite() {
  */
 export function updateFavorite(data) {
   return request({
-    url: '/api/favorite',
+    url: '/api/user/favorite',
     method: 'put',
     data,
   })

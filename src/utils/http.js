@@ -4,17 +4,19 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 
 // 创建axios实例
-const service = axios.create({
+const defaultConfig = {
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
-  timeout: 15000,
+  timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
     // // 在这里添加其他默认请求头
     'Cache-Control': 'no-cache, no-store, must-revalidate',
     Pragma: 'no-cache',
     Expires: '0',
   },
-})
+}
+
+const service = axios.create(defaultConfig)
 
 // 请求拦截器
 service.interceptors.request.use(
