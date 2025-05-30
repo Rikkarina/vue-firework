@@ -3,64 +3,176 @@ description:
 globs: 
 alwaysApply: false
 ---
-# 文件上传功能实现计划
+# 文件上传功能详细实现计划
 
-## 目录结构
+## 1. 文件存储目录结构
 ```
 mock/
   └── uploads/           # 模拟文件存储目录
-      └── files/        # 文件存储目录
+      ├── files/        # 文件存储目录
+      ├── temp/         # 临时文件目录（用于分片 metadata/     # 文件元数据存储目录
 ```
 
-## 实现步骤
+## 2.# 2.1 基础文件上传
+1. 前端实现：
+   - 文件选择/拖拽组件
+   - 文件大小限制（1GB）
+   - 文件类型限制（可选）
+   - 上传进度显示
+   - 错误处理和提示
 
-### 1. 文件存储目录创建
-- 在 mock 目录下创建 uploads 目录
-- 在 uploads 下创建 files 目录用于存储文件
+2. 后端实现：
+   - 文件接收接口
+   - 文件存储逻辑
+   - 文件元数据记录
+   - 错误处理机制
 
-### 2. 文件上传功能实现
-需要修改的文件：
-- [mock/file.js](mdc:mock/file.js) - 实现文件存储和元数据管理
+### 2.2 分片上传（大文件）
+1. 前端实现：
+   - 文件分片逻辑
+   - 分片上传队列
+   - 断点续传支持
+    失败重试机制
 
-#### 2.1 文件存储工具函数
-在 [mock/file.js](mdc:mock/file.js) 中添加：
-- 文件存储路径配置
-- 文件保存函数
-- 文件读取函数
-- 文件清理函数
+2. 后端实现：
+   - 分片接收接口
+   - 分片存储逻辑
+   - 分片合并逻辑
+   - 临时文件清理
 
-#### 2.2 文件上传处理
-修改 `/api/files/chunk` 接口：
-- 接收上传的文件
-- 生成唯一文件名
-- 保存文件到存储目录
-- 返回文件信息
+## 3. 具体实现步骤
 
-#### 2.3 文件信息保存
-修改 `/api/files/merge` 接口：
-- 更新文件元数据
-- 关联文件存储路径
-- 更新文件状态
+### 3.1 文件存储工具函数
+```javascript
+const fileStorage = {
+  // 基础文件操作
+  saveFile: (file, fileName) => {},
+  readFile: (fileName) => {},
+  deleteFile: (fileName) => {},
+  
+  // 分片相关操作
+  saveChunk: (chunk, chunkId) => {},
+  mergeChunks: (chunkIds, fileName) => {},
+  deleteChunks: (chunkIds) => {},
+  
+  // 元数据操作
+  saveMetadata: (fileInfo) => {},
+  getMetadata: (fileId) => {},
+  updateMetadata: (fileId, updates) => {},
+  
+  // 工具函数
+  generateUniqueFileName: (originalName) => {},
+  validateFile: (file) => {},
+  getFileType: (fileName) => {},
+}
+```
 
-#### 2.4 文件元数据管理
-在 [mock/file.js](mdc:mock/file.js) 中：
-- 维护文件列表
-- 记录文件存储路径
-- 更新文件状态
+### 3.2 API 接口设计
+1. 基础上传接口：
+   ```
+   POST /api/files/upload
+   - 接收文件
+   - 返回文件ID和URL
+   ```
 
-## 注意事项
-1. 文件存储路径使用相对路径
-2. 需要处理文件名冲突
-3. 需要定期清理未使用的文件
-4. 文件元数据需要持久化
-5. 上传过程中需要处理异常情况
+2. 分片上传接口：
+   ```
+   POST /api/files/chunk
+   - 接收分片
+   - 返回分片ID
+   
+   POST /api/files/merge
+   - 合并分片
+   - 返回完整文件信息
+   ```
 
-## 后续扩展
-1. 添加文件类型验证
-2. 实现文件秒传功能
-3. 添加文件预览功能
-4. 实现文件下载功能
+3. 文件信息接口：
+   ```
+   GET /api/files/:fileId
+   - 获取文件信息
+   
+   PUT /api/files/:fileId
+   - 更新文件信息
+   
+   DELETE /api/files/:fileId
+   - 删除文件
+   ```
 
+### 3.3 数据模型设计
+1. 文件元数据：
+```javascript
+{
+  id: string,          // 文件ID
+  name: string,        // 原始文件名
+  size: number,        // 文件大小
+  type: string,        // 文件类型
+  path: string,        // 存储路径
+  url: string,         // 访问URL
+  uploadTime: Date,    // 上传时间
+  status: string,      // 文件状态
+  metadata: {          // 扩展元数据
+    courseId: string,
+    category: string,
+    tags: string[],
+    // ...其他元数据
+  }
+}
+```
 
+2. 分片信息：
+```javascript
+{
+  id: string,          // 分片ID
+  fileId: string,      // 所属文件ID
+  index: number,       // 分片序号
+  size: number,        // 分片大小
+  path: string,        // 存储路径
+  status: string,      // 分片状态
+}
+```
 
+## 4. 实现顺序
+
+1. 第一阶段：基础文件上传
+   - 实现文件存储目录
+   - 实现基础文件操作函数
+   - 实现简单文件上传接口
+   - 实现前端上传组件
+
+2. 第二阶段：分片上传
+   - 实现分片存储逻辑
+   - 实现分片上传接口
+   - 实现分片合并逻辑
+   - 实现前端分片上传
+
+3. 第三阶段：元数据管理
+   - 实现元数据存储
+   - 实现文件信息接口
+   - 实现文件管理功能
+
+4. 第四阶段：优化和扩展
+   - 实现断点续传
+   - 实现文件秒传
+   - 实现文件预览
+   - 实现文件下载
+
+## 5. 注意事项
+
+1. 安全性考虑：
+   - 文件类型验证
+   - 文件大小限制
+   - 存储路径安全
+   - 访问权限控制
+
+2. 性能考虑：
+   - 大文件处理
+   - 并发上传控制
+   - 存储空间管理
+   - 临时文件清理
+
+3. 可靠性考虑：
+   - 上传失败重试
+   - 断点续传支持
+   - 数据一致性保证
+   - 错误处理机制
 

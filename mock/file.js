@@ -60,59 +60,6 @@ const mockData = [
       }
     },
   },
-  // 上传分片
-  {
-    url: '/api/files/chunk',
-    method: 'POST',
-    response: ({ body }) => {
-      const fileName = body.name || 'unknown'
-      const fileSize = body.size || 0
-
-      return {
-        code: 200,
-        message: '文件上传成功',
-        data: {
-          fileName: fileName,
-          fileSize: fileSize,
-        },
-      }
-    },
-  },
-  // 保存文件信息
-  {
-    url: '/api/files/merge',
-    method: 'POST',
-    response: ({ body }) => {
-      const { fileName, fileSize, title, type, category, courseId } = body
-
-      // 生成新的文件ID
-      const newFileId = Date.now()
-      const now = new Date()
-      const uploadTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`
-
-      // 创建新文件对象
-      const newFile = {
-        id: newFileId,
-        courseId: parseInt(courseId),
-        title: title,
-        type: type,
-        category: category,
-        size: parseInt(fileSize),
-        uploadTime: uploadTime,
-        downloadCount: 0,
-        url: `/files/${fileName}`,
-      }
-
-      // 添加到文件列表
-      files.push(newFile)
-
-      return {
-        code: 200,
-        message: '文件信息保存成功',
-        data: newFile,
-      }
-    },
-  },
 ]
 
 export default mockData

@@ -30,6 +30,10 @@ export default defineConfig({
       mockPath: 'mock',
       localEnabled: true,
       logger: true, // 启用控制台日志输出
+      injectCode: `
+        import { setupProdMockServer } from './mock/mockProdServer';
+        setupProdMockServer();
+      `,
     }),
   ],
   resolve: {
@@ -50,10 +54,14 @@ export default defineConfig({
   server: {
     port: 5174,
     proxy: {
-      '/api': {
+      '/api/files': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
+    },
+    fs: {
+      strict: false,
+      allow: ['..'],
     },
   },
   envDir: './',
