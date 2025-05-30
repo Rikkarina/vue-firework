@@ -1,3 +1,26 @@
+<script setup>
+import { onMounted } from 'vue'
+// 导入并使用 useFileList Composable
+import { useFileList } from '@/views/File/composables/useFileList'
+import FileCard from '@/components/FileCard.vue'
+
+const {
+  loading,
+  fileList,
+  selectedType,
+  selectedCategory,
+  pageTitle,
+  fetchFileList,
+  handleFileClick,
+  FileType,
+  FileCategory,
+} = useFileList()
+
+onMounted(() => {
+  fetchFileList()
+})
+</script>
+
 <template>
   <div class="file-list">
     <div class="page-header">
@@ -28,115 +51,12 @@
           :file-type="file.fileType"
           :size="file.size"
           :upload-time="file.uploadTime"
-          @click="handleFileClick"
+          @click="handleFileClick(file)"
         />
       </div>
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { getCourseFiles, searchFiles, downloadFile } from '@/apis/file'
-import { getFavorite } from '@/apis/favorite'
-import { FileType, FileCategory } from '@/types/fileTypes'
-import FileCard from '@/components/FileCard.vue'
-import { ElMessage } from 'element-plus'
-
-const route = useRoute()
-const loading = ref(false)
-const fileList = ref([])
-const selectedType = ref('')
-const selectedCategory = ref('')
-
-// 根据路由参数判断是课程文件还是搜索结果
-const isSearchResult = computed(() => route.name === 'FileSearch')
-const isFavorite = computed(() => route.name === 'Favorite')
-const pageTitle = computed(() => {
-  if (isSearchResult.value) {
-    return `搜索结果：${route.query.keyword || ''}`
-  }
-  if (isFavorite.value) {
-    return '我的收藏'
-  }
-  return '课程文件'
-})
-
-// 获取文件列表
-const fetchFileList = async () => {
-  loading.value = true
-  try {
-    if (isSearchResult.value) {
-      const { data } = await searchFiles(route.query.keyword)
-      fileList.value = data
-    } else if (isFavorite.value) {
-      const { data } = await getFavorite()
-      fileList.value = data.resources || []
-    } else {
-      const { data } = await getCourseFiles(route.params.courseId)
-      fileList.value = data
-    }
-  } catch (error) {
-    console.error('获取文件列表失败：', error)
-    ElMessage.error('获取文件列表失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// 处理文件点击
-const handleFileClick = async (file) => {
-  try {
-    loading.value = true
-    const response = await downloadFile(file.id)
-
-    // 直接使用 response.data，因为它已经是 Blob 了
-    const blob = response.data
-
-    // 从 Content-Disposition 获取文件名
-    const contentDisposition = response.headers['content-disposition']
-    let fileName = file.title
-    if (contentDisposition) {
-      const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition)
-      if (matches != null && matches[1]) {
-        fileName = decodeURIComponent(matches[1].replace(/['"]/g, ''))
-      }
-    }
-
-    // 如果没有扩展名，添加扩展名
-    if (!fileName.includes('.')) {
-      const ext = file.url.split('.').pop()
-      fileName = `${fileName}.${ext}`
-    }
-
-    const url = window.URL.createObjectURL(blob)
-
-    // 创建下载链接
-    const link = document.createElement('a')
-    link.href = url
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-
-    // 清理
-    setTimeout(() => {
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(link)
-    }, 100)
-
-    ElMessage.success('文件下载成功')
-  } catch {
-    ElMessage.error('文件下载失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchFileList()
-})
-</script>
 
 <style lang="scss" scoped>
 .file-list {
