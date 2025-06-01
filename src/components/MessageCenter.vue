@@ -134,7 +134,7 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import { getMessageList, getUnreadCount, markAsRead, deleteMessage, getMessageDetail } from '@/api/message'
+import { getMessageList, getUnreadCount, markAsRead, deleteMessage, getMessageDetail } from '@/apis/message'
 import dayjs from 'dayjs'
 
 export default {
