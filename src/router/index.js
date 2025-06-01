@@ -51,6 +51,13 @@ const routes = [
         component: () => import('@/views/Upload/UploadPage.vue'),
         meta: { title: '文件上传', requiresAuth: true },
       },
+       // 消息中心
+      {
+        path: 'messages',
+        name: 'MessageCenter',
+        component: () => import('@/views/Message/MessageCenter.vue'),
+        meta: { title: '消息中心', requiresAuth: true },
+      },
     ],
   },
 
