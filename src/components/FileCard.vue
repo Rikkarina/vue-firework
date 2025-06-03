@@ -40,7 +40,6 @@ import {
   Download,
 } from '@element-plus/icons-vue'
 import { FileFormat } from '@/types/fileTypes'
-import { ref } from 'vue'
 import { addToFavorite, removeFromFavorite } from '@/apis/favorite'
 import { useFileDownload } from '@/views/File/composables/useFileDownload'
 import { ElMessage } from 'element-plus'
