@@ -1,3 +1,50 @@
+<script setup>
+import { onMounted } from 'vue'
+// 导入并使用 useFileList Composable
+import { useFileList } from '@/views/File/composables/useFileList'
+// import { useFileDownload } from '@/views/File/composables/useFileDownload'
+import { useFilePreview } from '@/views/File/composables/useFilePreview' // 重新引入预览 composable
+import FileCard from '@/components/FileCard.vue'
+import FilePreviewModal from '@/views/File/FilePreviewModal.vue' // 重新引入预览模态框
+
+const {
+  loading,
+  fileList,
+  selectedType,
+  selectedCategory,
+  pageTitle,
+  fetchFileList,
+  FileType,
+  FileCategory,
+} = useFileList()
+
+// const { startDownload, downloadLoading } = useFileDownload()
+const {
+  // 引入预览 composable 的状态和方法
+  isPreviewModalVisible,
+  previewFile,
+  previewUrl,
+  previewLoading,
+  openPreviewModal,
+  closePreviewModal,
+} = useFilePreview()
+
+// 处理文件卡片点击事件
+const handleFileCardClick = (file) => {
+  // 阻止重复点击或在加载时点击 (保留对 previewLoading 的检查)
+  if (previewLoading.value) {
+    // 检查下载和预览加载状态
+    return
+  }
+
+  openPreviewModal(file)
+}
+
+onMounted(() => {
+  fetchFileList()
+})
+</script>
+
 <template>
   <div class="file-list">
     <div class="page-header">
@@ -28,73 +75,22 @@
           :file-type="file.fileType"
           :size="file.size"
           :upload-time="file.uploadTime"
-          @click="handleFileClick"
+          @click="handleFileCardClick(file)"
+          :loading="downloadLoading || previewLoading"
         />
       </div>
     </div>
+
+    <!-- 文件预览模态框 -->
+    <file-preview-modal
+      :isVisible="isPreviewModalVisible"
+      :previewFile="previewFile"
+      :previewUrl="previewUrl"
+      :loading="previewLoading"
+      @close="closePreviewModal"
+    />
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { getCourseFiles, searchFiles } from '@/apis/file'
-import { getFavorite } from '@/apis/favorite'
-import { FileType, FileCategory } from '@/types/fileTypes'
-import FileCard from '@/components/FileCard.vue'
-import { ElMessage } from 'element-plus'
-
-const route = useRoute()
-const loading = ref(false)
-const fileList = ref([])
-const selectedType = ref('')
-const selectedCategory = ref('')
-
-// 根据路由参数判断是课程文件还是搜索结果
-const isSearchResult = computed(() => route.name === 'FileSearch')
-const isFavorite = computed(() => route.name === 'Favorite')
-const pageTitle = computed(() => {
-  if (isSearchResult.value) {
-    return `搜索结果：${route.query.keyword || ''}`
-  }
-  if (isFavorite.value) {
-    return '我的收藏'
-  }
-  return '课程文件'
-})
-
-// 获取文件列表
-const fetchFileList = async () => {
-  loading.value = true
-  try {
-    if (isSearchResult.value) {
-      const { data } = await searchFiles(route.query.keyword)
-      fileList.value = data
-    } else if (isFavorite.value) {
-      const { data } = await getFavorite()
-      fileList.value = data.resources || []
-    } else {
-      const { data } = await getCourseFiles(route.params.courseId)
-      fileList.value = data
-    }
-  } catch (error) {
-    console.error('获取文件列表失败：', error)
-    ElMessage.error('获取文件列表失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// 处理文件点击
-const handleFileClick = (file) => {
-  // TODO: 实现文件预览或下载逻辑
-  console.log('点击文件：', file)
-}
-
-onMounted(() => {
-  fetchFileList()
-})
-</script>
 
 <style lang="scss" scoped>
 .file-list {

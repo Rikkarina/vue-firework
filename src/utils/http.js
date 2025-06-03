@@ -36,6 +36,13 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
+    // 对于 blob 类型的响应，直接返回 response 或者 response.data
+    if (response.config.responseType === 'blob') {
+      // 可以选择返回完整的 response 对象，或者只返回 data (Blob)
+      // 这里我们返回完整的 response，以便于获取 headers (如 Content-Disposition)
+      return response
+    }
+
     const res = response.data
     if (res.code !== 200) {
       ElMessage.error(res.message || '请求失败')
