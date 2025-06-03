@@ -32,3 +32,6 @@ coverage
 test-results/
 playwright-report/
 
+# Project specific
+/files/
+

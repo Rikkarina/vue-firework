@@ -1,5 +1,19 @@
 <template>
   <el-card class="file-card" @click="handleClick">
+    <div class="file-actions">
+      <el-button
+        class="action-button"
+        :icon="isFavorite ? StarFilled : Star"
+        :type="isFavorite ? 'warning' : 'default'"
+        @click.stop="handleFavorite"
+      />
+      <el-button
+        class="action-button"
+        :icon="Download"
+        :loading="downloadLoading"
+        @click.stop="handleDownload"
+      />
+    </div>
     <div class="file-icon">
       <el-icon :size="32">
         <component :is="getFileIcon(fileType)" />
@@ -16,8 +30,20 @@
 </template>
 
 <script setup>
-import { Document, Picture, Files, Collection } from '@element-plus/icons-vue'
+import {
+  Document,
+  Picture,
+  Files,
+  Collection,
+  Star,
+  StarFilled,
+  Download,
+} from '@element-plus/icons-vue'
 import { FileFormat } from '@/types/fileTypes'
+import { ref } from 'vue'
+import { addToFavorite, removeFromFavorite } from '@/apis/favorite'
+import { useFileDownload } from '@/views/File/composables/useFileDownload'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   id: {
@@ -40,9 +66,15 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isFavorite: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click', 'favorite-change'])
+
+const { startDownload, downloadLoading } = useFileDownload()
 
 // 获取文件图标
 const getFileIcon = (fileType) => {
@@ -75,16 +107,80 @@ const formatFileSize = (size) => {
 const handleClick = () => {
   emit('click', props)
 }
+
+// 处理收藏
+const handleFavorite = async () => {
+  try {
+    if (props.isFavorite) {
+      await removeFromFavorite(props.id)
+      ElMessage.success('已取消收藏')
+    } else {
+      await addToFavorite(props.id)
+      ElMessage.success('收藏成功')
+    }
+    emit('favorite-change', !props.isFavorite)
+  } catch (error) {
+    console.error('收藏操作失败：', error)
+    ElMessage.error('操作失败，请重试')
+  }
+}
+
+// 处理下载
+const handleDownload = () => {
+  startDownload(props)
+}
 </script>
 
 <style lang="scss" scoped>
 .file-card {
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .file-actions {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-75%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1;
+  }
+
+  .action-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    margin: 0 !important;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      border-color: #409eff;
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    :deep(.el-icon) {
+      font-size: 14px;
+    }
   }
 
   .file-icon {
