@@ -1,0 +1,188 @@
+:root {
+  // 主色调
+  --color-primary: #409eff;
+  --color-success: #67c23a;
+  --color-warning: #e6a23c;
+  --color-danger: #f56c6c;
+  --color-info: #909399;
+
+  // 背景色
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7fa;
+  --bg-tertiary: #ebeef5;
+
+  // 文字颜色
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+  --text-disabled: #c0c4cc;
+
+  // 边框颜色
+  --border-color: #dcdfe6;
+  --border-color-light: #e4e7ed;
+  --border-color-lighter: #ebeef5;
+
+  // 阴影
+  --shadow-base: 0 2px 4px rgba(0, 0, 0, 0.12);
+  --shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 2px 16px 0 rgba(0, 0, 0, 0.08);
+
+  // 特殊颜色
+  --mask-color: rgba(0, 0, 0, 0.5);
+  --overlay-color: rgba(0, 0, 0, 0.8);
+
+  // 组件特定颜色
+  --header-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --menu-hover-bg: #f3f4f6;
+  --card-bg: #ffffff;
+
+  // 文件列表
+  --file-item-hover: #f9fafb;
+  --file-item-active: #f3f4f6;
+  --file-icon-color: #6b7280;
+
+  // 消息中心
+  --message-unread-bg: #f8f9fa;
+  --message-hover-bg: #f9fafb;
+  --message-tag-bg: #f3f4f6;
+
+  // 表单元素
+  --input-bg: #ffffff;
+  --input-border: #e5e7eb;
+  --input-text: #1f2937;
+  --input-placeholder: #9ca3af;
+
+  // 按钮
+  --button-default-bg: #ffffff;
+  --button-default-border: #e5e7eb;
+  --button-default-text: #374151;
+  --button-primary-bg: var(--color-primary);
+  --button-primary-text: #ffffff;
+
+  // 下拉菜单
+  --dropdown-bg: #ffffff;
+  --dropdown-border: #e5e7eb;
+  --dropdown-item-hover: #f3f4f6;
+
+  // 对话框
+  --dialog-bg: #ffffff;
+  --dialog-border: #e5e7eb;
+  --dialog-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  // 标签
+  --tag-bg: #f3f4f6;
+  --tag-border: #e5e7eb;
+  --tag-text: #374151;
+}
+
+// 深色主题
+html.dark {
+  // 主色调保持不变，但调整亮度
+  --color-primary: #409eff;
+  --color-success: #67c23a;
+  --color-warning: #e6a23c;
+  --color-danger: #f56c6c;
+  --color-info: #909399;
+
+  // 背景色
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2c2c2c;
+
+  // 文字颜色
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --text-disabled: #4b5563;
+
+  // 边框颜色
+  --border-color: #333333;
+  --border-color-light: #404040;
+  --border-color-lighter: #4a4a4a;
+
+  // 阴影
+  --shadow-base: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
+  --shadow-dark: 0 2px 16px 0 rgba(0, 0, 0, 0.16);
+
+  // 特殊颜色
+  --mask-color: rgba(0, 0, 0, 0.7);
+  --overlay-color: rgba(0, 0, 0, 0.9);
+
+  // Element Plus 暗色模式覆盖
+  --el-bg-color: var(--bg-primary);
+  --el-bg-color-overlay: var(--bg-secondary);
+  --el-text-color-primary: var(--text-primary);
+  --el-text-color-regular: var(--text-secondary);
+  --el-text-color-secondary: var(--text-tertiary);
+  --el-text-color-placeholder: var(--text-disabled);
+  --el-border-color: var(--border-color);
+  --el-border-color-light: var(--border-color-light);
+  --el-border-color-lighter: var(--border-color-lighter);
+  --el-mask-color: var(--mask-color);
+  --el-box-shadow: var(--shadow-base);
+  --el-box-shadow-light: var(--shadow-light);
+  --el-box-shadow-dark: var(--shadow-dark);
+
+  // 组件特殊处理
+  .el-card,
+  .el-dialog,
+  .el-message-box,
+  .el-dropdown-menu,
+  .el-menu {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .el-table {
+    --el-table-bg-color: var(--bg-secondary);
+    --el-table-tr-bg-color: var(--bg-secondary);
+    --el-table-header-bg-color: var(--bg-tertiary);
+    --el-table-border-color: var(--border-color);
+
+    th.el-table__cell {
+      background-color: var(--bg-tertiary) !important;
+    }
+  }
+
+  .el-input__wrapper,
+  .el-textarea__wrapper {
+    background-color: var(--bg-secondary) !important;
+  }
+
+  .el-button--default {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+
+    &:hover {
+      background-color: var(--bg-tertiary);
+      border-color: var(--border-color-light);
+    }
+  }
+
+  // 滚动条样式
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--text-tertiary);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: var(--text-secondary);
+    }
+  }
+}
+
+// 主题切换过渡动画
+* {
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}

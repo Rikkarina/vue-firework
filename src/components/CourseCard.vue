@@ -1,29 +1,22 @@
 <template>
-  <el-card class="course-card" @click="handleClick">
+  <div class="course-card" @click="handleClick">
     <div class="card-header">
       <div class="course-icon">
         <span class="icon-text">{{ title.charAt(0).toUpperCase() }}</span>
       </div>
       <div class="course-title">{{ title }}</div>
     </div>
-    <div class="desc-tooltip-wrapper">
-      <span class="course-desc" @mouseenter="showTooltip" @mouseleave="hideTooltip" ref="descRef">{{
-        description
-      }}</span>
+    <div class="course-tags" v-if="courseType || credits">
+      <el-tag size="small" :type="courseTypeColor">{{ courseType || '未知类型' }}</el-tag>
+      <el-tag size="small" type="info" v-if="credits">{{ credits }}学分</el-tag>
     </div>
+    <div class="course-desc">{{ description }}</div>
     <div class="course-date">最后修改日期：{{ date }}</div>
-    <teleport to="body">
-      <transition name="fade-tooltip">
-        <span v-if="tooltipVisible" class="desc-tooltip-global" :style="tooltipStyle">{{
-          description
-        }}</span>
-      </transition>
-    </teleport>
-  </el-card>
+  </div>
 </template>
 
 <script setup>
-import { ref, defineProps, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
@@ -43,39 +36,27 @@ const props = defineProps({
     type: String,
     default: '2023/11/01',
   },
+  courseType: {
+    type: String,
+    default: '',
+  },
+  credits: {
+    type: [Number, String],
+    default: '',
+  }
 })
 
 const router = useRouter()
 
-const tooltipVisible = ref(false)
-const tooltipStyle = ref({})
-const descRef = ref(null)
-
-function showTooltip() {
-  tooltipVisible.value = true
-  const rect = descRef.value.getBoundingClientRect()
-  tooltipStyle.value = {
-    position: 'fixed',
-    left: rect.left + 'px',
-    top: rect.bottom + 4 + 'px',
-    minWidth: rect.width + 'px',
-    maxWidth: '320px',
-    background: '#333',
-    color: '#fff',
-    borderRadius: '4px',
-    padding: '6px 12px 6px 12px',
-    zIndex: 9999,
-    fontSize: '13px',
-    pointerEvents: 'none',
-    whiteSpace: 'pre-line',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+const courseTypeColor = computed(() => {
+  switch(props.courseType) {
+    case '必修':
+      return 'danger'
+    case '选修':
+      return 'success'
+    default:
+      return 'info'
   }
-}
-function hideTooltip() {
-  tooltipVisible.value = false
-}
-onUnmounted(() => {
-  tooltipVisible.value = false
 })
 
 const handleClick = () => {
@@ -90,38 +71,37 @@ const handleClick = () => {
 
 <style lang="scss" scoped>
 $card-bg: #fff;
-$title-color: #111;
-$desc-color: #555;
-$date-color: #999;
-$icon-bg: #f3f5f7;
-$icon-color: #222;
-$icon-size: 40px;
-$icon-radius: 8px;
-$card-width: 200px;
-$card-height: 180px; // 4:3比例
+$title-color: #1f2937;
+$desc-color: #4b5563;
+$date-color: #9ca3af;
+$icon-bg: #f3f4f6;
+$icon-color: #374151;
+$icon-size: 36px;
+$icon-radius: 4px;
+$border-color: #e5e7eb;
 
 .course-card {
-  width: $card-width;
-  height: $card-height;
   background: $card-bg;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  position: relative;
   cursor: pointer;
+  transition: all 0.2s ease;
+  height: 160px;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    background-color: #f9fafb;
+    border-color: #d1d5db;
   }
 
   .card-header {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
+    gap: 12px;
+    margin-bottom: 8px;
+
     .course-icon {
       width: $icon-size;
       height: $icon-size;
@@ -131,68 +111,50 @@ $card-height: 180px; // 4:3比例
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+
       .icon-text {
-        font-size: 24px;
-        font-weight: 700;
+        font-size: 20px;
+        font-weight: 600;
         color: $icon-color;
-        font-family: 'Inter', 'Arial', sans-serif;
+        font-family: system-ui, -apple-system, sans-serif;
         user-select: none;
       }
     }
+
     .course-title {
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 500;
       color: $title-color;
-      line-height: 1.2;
-      word-break: break-all;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
-  .desc-tooltip-wrapper {
-    position: relative;
-    width: 100%;
-    margin-top: 12px;
-    .course-desc {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: 13px;
-      color: $desc-color;
-      margin-top: 2px;
-      margin-bottom: 24px;
-      line-height: 1.5;
-      word-break: break-all;
-      cursor: pointer;
-      background: transparent;
-      transition: color 0.2s;
-    }
+  .course-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .course-desc {
+    font-size: 13px;
+    color: $desc-color;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: auto;
   }
 
   .course-date {
-    position: absolute;
-    right: 12px;
-    bottom: 8px;
-    font-size: 11px;
+    font-size: 12px;
     color: $date-color;
-    letter-spacing: 0.5px;
+    margin-top: 8px;
   }
 }
-
-.desc-tooltip-global {
-  transition: opacity 0.2s;
-}
-.fade-tooltip-enter-active,
-.fade-tooltip-leave-active {
-  transition: opacity 0.2s;
-}
-.fade-tooltip-enter-from,
-.fade-tooltip-leave-to {
-  opacity: 0;
-}
-.fade-tooltip-enter-to,
-.fade-tooltip-leave-from {
-  opacity: 1;
-}
 </style>
+

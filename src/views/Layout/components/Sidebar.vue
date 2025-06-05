@@ -9,33 +9,37 @@
       background-color="#fff"
       text-color="#b0b3b8"
       active-text-color="#2b6cb6"
-      router
+      :router="true"
     >
-      <el-menu-item index="/home">
+      <el-menu-item index="home">
         <el-icon><grid /></el-icon>
         <span>课程概览</span>
       </el-menu-item>
-      <el-menu-item index="/favorite">
+      <el-menu-item index="favorite">
         <el-icon><collection /></el-icon>
         <span>收藏夹</span>
       </el-menu-item>
-      <el-menu-item index="/upload">
+      <el-menu-item index="upload">
         <el-icon><upload /></el-icon>
         <span>文件上传</span>
       </el-menu-item>
-      <el-menu-item index="/iteration" disabled>
+      <el-menu-item index="messages">
+        <el-icon><bell /></el-icon>
+        <span>消息中心</span>
+      </el-menu-item>
+      <el-menu-item index="history">
+        <el-icon><clock /></el-icon>
+        <span>历史浏览</span>
+      </el-menu-item>
+      <el-menu-item index="iteration" disabled>
         <el-icon><cpu /></el-icon>
         <span>迭代功能</span>
       </el-menu-item>
-      <el-menu-item index="/history">
-        <el-icon><tickets /></el-icon>
-        <span>版本记录</span>
-      </el-menu-item>
-      <el-menu-item index="/help">
+      <el-menu-item index="help">
         <el-icon><question-filled /></el-icon>
         <span>帮助文档</span>
       </el-menu-item>
-      <el-menu-item index="/profile">
+      <el-menu-item index="profile">
         <el-icon><user /></el-icon>
         <span>个人中心</span>
       </el-menu-item>
@@ -50,8 +54,9 @@ import {
   Grid,
   Collection,
   Upload,
+  Bell,
+  Clock,
   Cpu,
-  Tickets,
   QuestionFilled,
   User,
 } from '@element-plus/icons-vue'
@@ -60,7 +65,7 @@ const router = useRouter()
 const route = useRoute()
 
 // 根据当前路由路径计算激活的菜单项
-const activeIndex = computed(() => route.path)
+const activeIndex = computed(() => route.name)
 
 const handleLogoClick = () => {
   router.push('/home')

@@ -35,6 +35,8 @@
           :title="course.title"
           :description="course.description"
           :date="course.date"
+          :course-type="course.courseType"
+          :credits="course.credits"
         />
       </div>
     </template>

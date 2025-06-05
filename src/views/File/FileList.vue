@@ -16,6 +16,7 @@ const {
   fetchFileList,
   FileType,
   FileCategory,
+  FileFormat,
 } = useFileList()
 
 // const { startDownload, downloadLoading } = useFileDownload()
@@ -51,16 +52,30 @@ onMounted(() => {
       <h1>{{ pageTitle }}</h1>
       <div class="filter-section">
         <el-select v-model="selectedType" placeholder="文件类型" clearable>
-          <el-option v-for="(value, key) in FileType" :key="key" :label="value" :value="value" />
+          <el-option
+            v-for="(value, key) in FileType"
+            :key="key"
+            :label="value"
+            :value="key"
+          />
         </el-select>
         <el-select v-model="selectedCategory" placeholder="文件分类" clearable>
           <el-option
             v-for="(value, key) in FileCategory"
             :key="key"
             :label="value"
-            :value="value"
+            :value="key"
           />
         </el-select>
+        <el-select v-model="selectedFormat" placeholder="文件格式" clearable>
+          <el-option
+            v-for="(value, key) in FileFormat"
+            :key="key"
+            :label="value"
+            :value="key"
+          />
+        </el-select>
+        <el-button @click="resetFilters" text>重置筛选</el-button>
       </div>
     </div>
 
@@ -76,7 +91,7 @@ onMounted(() => {
           :size="file.size"
           :upload-time="file.uploadTime"
           @click="handleFileCardClick(file)"
-          :loading="downloadLoading || previewLoading"
+          :loading="previewLoading"
         />
       </div>
     </div>
@@ -102,13 +117,18 @@ onMounted(() => {
     h1 {
       font-size: 24px;
       font-weight: 600;
-      color: #1a1a1a;
+      color: var(--text-primary);
       margin-bottom: 16px;
     }
 
     .filter-section {
       display: flex;
       gap: 16px;
+      align-items: center;
+
+      .el-select {
+        width: 160px;
+      }
     }
   }
 

@@ -14,7 +14,7 @@ const routes = [
         path: 'home',
         name: 'Home',
         component: () => import('@/views/Home/HomePage.vue'),
-        meta: { title: '首页', requiresAuth: true }, // 假设需登录
+        meta: { title: '首页', requiresAuth: true },
       },
       // 部门详情页
       {
@@ -44,12 +44,40 @@ const routes = [
         component: () => import('@/views/File/FileList.vue'),
         meta: { title: '我的收藏', requiresAuth: true },
       },
+      // 消息中心
+      {
+        path: 'messages',
+        name: 'Messages',
+        component: () => import('@/views/Message/MessageCenter.vue'),
+        meta: { title: '消息中心', requiresAuth: true },
+      },
+      // 历史浏览
+      {
+        path: 'history',
+        name: 'History',
+        component: () => import('@/views/History/BrowsingHistory.vue'),
+        meta: { title: '历史浏览', requiresAuth: true },
+      },
       // 文件上传页面
       {
         path: 'upload',
         name: 'Upload',
         component: () => import('@/views/Upload/UploadPage.vue'),
         meta: { title: '文件上传', requiresAuth: true },
+      },
+      // 个人主页
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@/views/Profile/ProfilePage.vue'),
+        meta: { title: '个人主页', requiresAuth: true },
+      },
+      // 帮助文档
+      {
+        path: 'help',
+        name: 'Help',
+        component: () => import('@/views/Help/HelpPage.vue'),
+        meta: { title: '帮助文档', requiresAuth: true },
       },
     ],
   },

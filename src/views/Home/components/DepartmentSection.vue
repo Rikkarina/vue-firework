@@ -9,6 +9,8 @@
           :title="course.title"
           :description="course.description"
           :date="course.date"
+          :course-type="course.courseType"
+          :credits="course.credits"
         />
         <el-card v-else-if="index === 7" class="more-btn" @click="handleMoreClick">
           <div class="more-icon">
@@ -49,54 +51,63 @@ const handleMoreClick = () => {
 
 <style lang="scss" scoped>
 .department-section {
-  margin-bottom: 40px;
-  margin-left: 20px;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   .department-title {
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: var(--primary-color, #2c3e50);
-    font-weight: 600;
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #1f2937;
+    font-weight: 500;
+    padding-left: 8px;
   }
 
   .course-grid {
-    margin-left: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    padding: 0 8px;
 
     @media (max-width: 768px) {
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
     }
 
     @media (max-width: 480px) {
-      gap: 10px;
+      grid-template-columns: 1fr;
+      gap: 8px;
     }
   }
 
   .more-btn {
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-align: center;
-    padding: 20px;
-    width: 200px; // 与CourseCard宽度保持一致
-    height: 180px; // 与CourseCard高度保持一致
+    padding: 16px;
+    height: 100%;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #f9fafb;
+    border-radius: 4px;
 
     &:hover {
-      background-color: var(--hover-bg, #f5f7fa);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #f3f4f6;
     }
 
     .more-icon {
       margin-bottom: 8px;
-      color: var(--text-secondary, #909399);
+      color: #6b7280;
     }
 
     p {
       font-size: 14px;
-      color: var(--text-primary, #303133);
+      color: #374151;
       margin: 0;
     }
   }
