@@ -20,8 +20,13 @@
       <el-tooltip content="夜间模式" placement="bottom">
         <el-icon class="icon-btn"><moon /></el-icon>
       </el-tooltip>
+      <el-tooltip content="历史记录" placement="bottom">
+        <el-icon class="icon-btn" @click="router.push('/history')"><time /></el-icon>
+      </el-tooltip>
       <el-tooltip content="消息中心" placement="bottom">
-        <el-icon class="icon-btn"><message /></el-icon>
+        <el-badge :value="unreadCount" :hidden="!unreadCount">
+          <el-icon class="icon-btn" @click="router.push('/messages')"><message /></el-icon>
+        </el-badge>
       </el-tooltip>
       <el-tooltip content="设置" placement="bottom">
         <el-icon class="icon-btn"><setting /></el-icon>
@@ -54,15 +59,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Moon, Message, Setting, User, SwitchButton } from '@element-plus/icons-vue'
+import { Search, Moon, Message, Setting, User, SwitchButton, Time } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessageBox } from 'element-plus'
+import { getUnreadCount } from '@/apis/message'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const searchQuery = ref('')
+const unreadCount = ref(0)
+
+// 获取未读消息数量
+const fetchUnreadCount = async () => {
+  try {
+    const { data } = await getUnreadCount()
+    unreadCount.value = Object.values(data).reduce((sum, count) => sum + count, 0)
+  } catch (error) {
+    console.error('获取未读消息数量失败:', error)
+  }
+}
 
 const handleSearch = () => {
   if (searchQuery.value) {
@@ -95,6 +112,11 @@ const handleCommand = async (command) => {
       break
   }
 }
+
+// 组件挂载时获取未读消息数量
+onMounted(() => {
+  fetchUnreadCount()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -173,5 +195,9 @@ const handleCommand = async (command) => {
   .el-icon {
     font-size: 16px;
   }
+}
+
+:deep(.el-badge__content) {
+  z-index: 1;
 }
 </style>

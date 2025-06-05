@@ -2,77 +2,142 @@
   <div class="message-center">
     <h2 class="title">消息中心</h2>
 
-    <!-- 活动区域 -->
-    <section class="section">
-      <div class="section-header">
-        <span class="section-title">活动</span>
-        <div class="badge-orange">{{ getUnreadCount('activity') }}</div>
-      </div>
-      <div class="section-content">
-        <template v-if="activities.length">
-          <div v-for="item in activities" :key="item.id" class="message-item" :class="{ 'unread': !item.isRead }">
-            <div class="message-title">{{ item.title }}</div>
-            <div class="message-content">{{ item.content }}</div>
-            <div class="message-footer">
-              <span class="message-time">{{ formatTime(item.createdAt) }}</span>
-              <div class="message-actions">
-                <button @click="markMessageAsRead(item.id)" v-if="!item.isRead">标记已读</button>
-                <button @click="deleteMessageItem(item.id)" class="delete">删除</button>
-              </div>
-            </div>
-          </div>
+    <el-tabs v-model="activeTab" class="message-tabs">
+      <el-tab-pane label="活动" name="activity">
+        <template #label>
+          <el-badge :value="getUnreadCount('activity')" :hidden="!getUnreadCount('activity')">
+            活动
+          </el-badge>
         </template>
-        <p v-else class="message-text">暂无活动消息</p>
-      </div>
-    </section>
-HTML Preview
-    <!-- 消息区域 -->
-    <section class="section">
-      <div class="section-header">
-        <span class="section-title">消息</span>
-        <div class="badge-green">{{ getUnreadCount('system') }}</div>
-      </div>
-      <div class="section-content">
-        <template v-if="messages.length">
-          <div v-for="item in messages" :key="item.id" class="message-item" :class="{ 'unread': !item.isRead }">
-            <div class="message-title">{{ item.title }}</div>
-            <div class="message-content">{{ item.content }}</div>
-            <div class="message-footer">
-              <span class="message-time">{{ formatTime(item.createdAt) }}</span>
-              <div class="message-actions">
-                <button @click="markMessageAsRead(item.id)" v-if="!item.isRead">标记已读</button>
-                <button @click="deleteMessageItem(item.id)" class="delete">删除</button>
+        <el-timeline v-if="activities.length">
+          <el-timeline-item
+            v-for="item in activities"
+            :key="item.id"
+            :timestamp="formatTime(item.createdAt)"
+            placement="top"
+            :type="item.isRead ? 'info' : 'primary'"
+          >
+            <el-card class="message-card" :class="{ 'unread': !item.isRead }">
+              <template #header>
+                <div class="card-header">
+                  <span class="title">{{ item.title }}</span>
+                  <el-tag v-if="!item.isRead" type="warning" effect="plain" size="small">未读</el-tag>
+                </div>
+              </template>
+              <p class="content">{{ item.content }}</p>
+              <div class="actions">
+                <el-button
+                  v-if="!item.isRead"
+                  type="primary"
+                  link
+                  @click="markMessageAsRead(item.id)"
+                >
+                  标记已读
+                </el-button>
+                <el-button
+                  type="danger"
+                  link
+                  @click="deleteMessageItem(item.id)"
+                >
+                  删除
+                </el-button>
               </div>
-            </div>
-          </div>
-        </template>
-        <p v-else class="message-text">暂无系统消息</p>
-      </div>
-    </section>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+        <el-empty v-else description="暂无活动消息" />
+      </el-tab-pane>
 
-    <!-- 通知区域 -->
-    <section class="section">
-      <div class="section-header">
-        <span class="section-title">通知</span>
-        <div class="badge-blue">{{ getUnreadCount('notification') }}</div>
-      </div>
-      <div class="section-content">
-        <template v-if="notifications.length">
-          <div v-for="item in notifications" :key="item.id" class="message-item" :class="{ 'unread': !item.isRead }">
-            <div class="message-title">{{ item.title }}</div>
-            <div class="message-content">{{ item.content }}</div>
-            <div class="message-footer">
-              <span class="message-time">{{ formatTime(item.createdAt) }}</span>
-              <div class="message-actions">
-                <button @click="markMessageAsRead(item.id)" v-if="!item.isRead">标记已读</button>
-                <button @click="deleteMessageItem(item.id)" class="delete">删除</button>
-              </div>
-            </div>
-          </div>
+      <el-tab-pane label="消息" name="system">
+        <template #label>
+          <el-badge :value="getUnreadCount('system')" :hidden="!getUnreadCount('system')">
+            消息
+          </el-badge>
         </template>
-        <p v-else class="message-text">暂无通知消息</p>
-      </div>
-    </section>
+        <el-timeline v-if="messages.length">
+          <el-timeline-item
+            v-for="item in messages"
+            :key="item.id"
+            :timestamp="formatTime(item.createdAt)"
+            placement="top"
+            :type="item.isRead ? 'info' : 'success'"
+          >
+            <el-card class="message-card" :class="{ 'unread': !item.isRead }">
+              <template #header>
+                <div class="card-header">
+                  <span class="title">{{ item.title }}</span>
+                  <el-tag v-if="!item.isRead" type="warning" effect="plain" size="small">未读</el-tag>
+                </div>
+              </template>
+              <p class="content">{{ item.content }}</p>
+              <div class="actions">
+                <el-button
+                  v-if="!item.isRead"
+                  type="primary"
+                  link
+                  @click="markMessageAsRead(item.id)"
+                >
+                  标记已读
+                </el-button>
+                <el-button
+                  type="danger"
+                  link
+                  @click="deleteMessageItem(item.id)"
+                >
+                  删除
+                </el-button>
+              </div>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+        <el-empty v-else description="暂无系统消息" />
+      </el-tab-pane>
+
+      <el-tab-pane label="通知" name="notification">
+        <template #label>
+          <el-badge :value="getUnreadCount('notification')" :hidden="!getUnreadCount('notification')">
+            通知
+          </el-badge>
+        </template>
+        <el-timeline v-if="notifications.length">
+          <el-timeline-item
+            v-for="item in notifications"
+            :key="item.id"
+            :timestamp="formatTime(item.createdAt)"
+            placement="top"
+            :type="item.isRead ? 'info' : 'warning'"
+          >
+            <el-card class="message-card" :class="{ 'unread': !item.isRead }">
+              <template #header>
+                <div class="card-header">
+                  <span class="title">{{ item.title }}</span>
+                  <el-tag v-if="!item.isRead" type="warning" effect="plain" size="small">未读</el-tag>
+                </div>
+              </template>
+              <p class="content">{{ item.content }}</p>
+              <div class="actions">
+                <el-button
+                  v-if="!item.isRead"
+                  type="primary"
+                  link
+                  @click="markMessageAsRead(item.id)"
+                >
+                  标记已读
+                </el-button>
+                <el-button
+                  type="danger"
+                  link
+                  @click="deleteMessageItem(item.id)"
+                >
+                  删除
+                </el-button>
+              </div>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
+        <el-empty v-else description="暂无通知消息" />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -84,6 +149,7 @@ import dayjs from 'dayjs'
 export default {
   name: 'MessageCenter',
   setup() {
+    const activeTab = ref('activity')
     const activities = ref([])
     const messages = ref([])
     const notifications = ref([])
@@ -164,6 +230,7 @@ export default {
     })
 
     return {
+      activeTab,
       activities,
       messages,
       notifications,
@@ -180,132 +247,91 @@ export default {
 <style scoped>
 .message-center {
   padding: 20px;
-  background: #fff;
+  background: var(--el-bg-color);
   border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
 }
 
 .title {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 24px;
-  color: #333;
+  color: var(--el-text-color-primary);
 }
 
-.section {
-  margin-bottom: 24px;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 6px;
+.message-tabs {
+  :deep(.el-tabs__nav-wrap) {
+    &::after {
+      height: 1px;
+    }
+  }
 }
 
-.section-header {
+.message-card {
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--el-border-color-light);
+}
+
+.message-card.unread {
+  border-color: var(--el-color-primary-light-7);
+  background-color: var(--el-color-primary-light-9);
+}
+
+.card-header {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  justify-content: space-between;
 }
 
-.section-title {
-  font-size: 18px;
-  font-weight: 500;
-  margin-right: 12px;
-}
-
-.badge-orange, .badge-green, .badge-blue {
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  min-width: 20px;
-  text-align: center;
-}
-
-.badge-orange {
-  background: #fff3e6;
-  color: #ff9500;
-}
-
-.badge-green {
-  background: #e6fff0;
-  color: #00b96b;
-}
-
-.badge-blue {
-  background: #e6f4ff;
-  color: #1677ff;
-}
-
-.section-content {
-  padding: 16px;
-  background: #fff;
-  border-radius: 4px;
-}
-
-.message-item {
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  transition: all 0.3s;
-}
-
-.message-item:last-child {
-  border-bottom: none;
-}
-
-.message-item.unread {
-  background: #f6f6f6;
-}
-
-.message-title {
+.title {
   font-size: 16px;
   font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.message-content {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.message-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.message-time {
-  font-size: 12px;
-  color: #999;
-}
-
-.message-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.message-actions button {
-  padding: 4px 12px;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  background: #e6f4ff;
-  color: #1677ff;
-}
-
-.message-actions button.delete {
-  background: #fff1f0;
-  color: #ff4d4f;
-}
-
-.message-actions button:hover {
-  opacity: 0.8;
-}
-
-.message-text {
-  color: #999;
-  font-size: 14px;
-  text-align: center;
   margin: 0;
+}
+
+.content {
+  color: var(--el-text-color-regular);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+:deep(.el-timeline) {
+  padding: 16px;
+}
+
+:deep(.el-timeline-item__node) {
+  &.el-timeline-item__node--primary {
+    background-color: var(--el-color-primary);
+  }
+  &.el-timeline-item__node--success {
+    background-color: var(--el-color-success);
+  }
+  &.el-timeline-item__node--warning {
+    background-color: var(--el-color-warning);
+  }
+  &.el-timeline-item__node--info {
+    background-color: var(--el-color-info);
+  }
+}
+
+:deep(.el-timeline-item__wrapper) {
+  padding-left: 24px;
+}
+
+:deep(.el-timeline-item__timestamp) {
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+}
+
+:deep(.el-empty) {
+  padding: 32px 0;
 }
 </style>
