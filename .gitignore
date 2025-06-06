@@ -35,3 +35,6 @@ playwright-report/
 # Project specific
 /files/
 
+# Cursor specific
+.cursor/
+
