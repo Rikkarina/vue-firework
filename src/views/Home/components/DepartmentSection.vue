@@ -9,6 +9,7 @@
           :title="course.title"
           :description="course.description"
           :date="course.date"
+          @click="handleCourseClick(course)"
         />
         <el-card v-else-if="index === 7" class="more-btn" @click="handleMoreClick">
           <div class="more-icon">
@@ -43,6 +44,19 @@ const handleMoreClick = () => {
   router.push({
     name: 'DepartmentDetail',
     params: { id: props.department.id },
+  })
+}
+
+// 处理课程卡片点击
+const handleCourseClick = (course) => {
+  router.push({
+    name: 'CourseFiles',
+    params: {
+      courseId: course.id
+    },
+    query: {
+      title: course.title
+    }
   })
 }
 </script>
