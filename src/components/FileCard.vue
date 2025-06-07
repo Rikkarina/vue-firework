@@ -13,6 +13,7 @@
         :loading="downloadLoading"
         @click.stop="handleDownload"
       />
+      <el-button class="action-button" :icon="Clock" @click.stop="handleVersion" />
     </div>
     <div class="file-icon">
       <el-icon :size="32">
@@ -38,6 +39,7 @@ import {
   Star,
   StarFilled,
   Download,
+  Clock,
 } from '@element-plus/icons-vue'
 import { FileFormat } from '@/types/fileTypes'
 import { addToFavorite, removeFromFavorite } from '@/apis/favorite'
@@ -71,7 +73,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['click', 'favorite-change'])
+const emit = defineEmits(['click', 'favorite-change', 'version'])
 
 const { startDownload, downloadLoading } = useFileDownload()
 
@@ -128,6 +130,11 @@ const handleFavorite = async () => {
 const handleDownload = () => {
   startDownload(props)
 }
+
+// 处理版本按钮点击
+const handleVersion = () => {
+  emit('version', props)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -145,7 +152,7 @@ const handleDownload = () => {
     position: absolute;
     top: 50%;
     right: 12px;
-    transform: translateY(-75%);
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
     gap: 8px;
