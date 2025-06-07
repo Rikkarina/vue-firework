@@ -1,6 +1,7 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useHistoryStore } from '@/stores/history'
 import Layout from '@/views/Layout/MainLayout.vue' // 全局布局组件
 
 const routes = [
@@ -51,6 +52,62 @@ const routes = [
         component: () => import('@/views/Upload/UploadPage.vue'),
         meta: { title: '文件上传', requiresAuth: true },
       },
+      // 消息中心
+      {
+        path: 'message',
+        name: 'MessageCenter',
+        component: () => import('@/views/Message/MessageCenter.vue'),
+        meta: {
+          title: '消息中心',
+          requiresAuth: true
+        }
+      },
+      // 消息详情
+      {
+        path: 'message/:id',
+        name: 'MessageDetail',
+        component: () => import('@/views/Message/MessageCenter.vue'),
+        props: (route) => ({
+          messageId: route.params.id,
+          messageType: route.query.type
+        }),
+        meta: {
+          title: '消息详情',
+          requiresAuth: true
+        }
+      },
+      // 帮助中心
+      {
+        path: 'help',
+        name: 'HelpCenter',
+        component: () => import('@/views/Help/HelpCenter.vue'),
+        props: (route) => ({
+          section: route.query.section
+        }),
+        meta: {
+          title: '帮助文档',
+          requiresAuth: false
+        }
+      },
+      // 浏览历史
+      {
+        path: 'history',
+        name: 'History',
+        component: () => import('@/views/History/HistoryPage.vue'),
+        meta: {
+          title: '浏览历史',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('@/views/Profile/ProfilePage.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '个人中心'
+        }
+      }
     ],
   },
 
@@ -88,7 +145,29 @@ router.beforeEach((to, from, next) => {
     // 已登录用户访问登录/注册页，重定向到首页
     next('/')
   } else {
+    // 设置页面标题
+    document.title = to.meta.title ? `${to.meta.title} - 消息中心` : '消息中心'
     next()
+  }
+})
+
+// 记录浏览历史
+router.afterEach((to) => {
+  // 排除登录、注册页面
+  if (to.name !== 'Login' && to.name !== 'Register') {
+    const historyStore = useHistoryStore()
+
+    // 如果是课程文件页面，使用课程信息作为标题
+    let title = to.meta.title || '未命名页面'
+    if (to.name === 'CourseFiles' && to.query.title) {
+      title = decodeURIComponent(to.query.title)
+    }
+
+    historyStore.addVisitedPage({
+      path: to.fullPath,
+      title,
+      courseId: to.params.courseId
+    })
   }
 })
 
