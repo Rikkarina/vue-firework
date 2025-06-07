@@ -13,6 +13,8 @@
  * @property {string[]} tags - 文件标签
  * @property {string} [courseId] - 所属课程ID
  * @property {string} [courseName] - 所属课程名称
+ * @property {FileVersion[]} versions - 文件版本列表
+ * @property {string} currentVersion - 当前版本号
  */
 
 /**
@@ -23,6 +25,19 @@
  * @property {string} downloadUrl - 实际下载地址
  * @property {Object} permissions - 文件权限信息
  * @property {Object} [watermark] - 水印信息
+ */
+
+/**
+ * 文件版本接口
+ * @typedef {Object} FileVersion
+ * @property {string} id - 版本唯一标识
+ * @property {string} version - 版本号（如 v1.0.0）
+ * @property {string} description - 版本描述
+ * @property {string} createTime - 创建时间
+ * @property {string} fileUrl - 文件URL
+ * @property {number} size - 文件大小（字节）
+ * @property {string} uploader - 上传者
+ * @property {string} fileId - 所属文件ID
  */
 
 /**
@@ -73,9 +88,21 @@ export const FilePermission = {
   DELETE: 'delete',
 }
 
+/**
+ * 版本操作类型枚举
+ * @enum {string}
+ */
+export const VersionOperation = {
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+  ROLLBACK: 'rollback',
+}
+
 export default {
   FileType,
   FileFormat,
   FileCategory,
   FilePermission,
+  VersionOperation,
 }
