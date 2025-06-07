@@ -292,7 +292,17 @@ router.post('/:fileId/versions', upload.single('file'), (req, res) => {
       fileId: fileId,
       version: version,
       description: description || '新版本',
-      createTime: new Date().toISOString(),
+      createTime: new Date()
+        .toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+        .replace(/\//g, '-'),
       uploader: req.user?.username || 'anonymous', // 假设有用户信息
       size: req.file.size,
       fileUrl: `/static/${req.file.filename}`,
