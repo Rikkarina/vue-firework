@@ -89,6 +89,7 @@ watch(
   (newVal) => {
     if (newVal) {
       fetchVersions()
+      console.log(versions.value)
     }
   },
   { immediate: true },
