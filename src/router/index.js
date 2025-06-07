@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useHistoryStore } from '@/stores/history'
+import { useLoadingStore } from '@/stores/loading'
 import Layout from '@/views/Layout/MainLayout.vue' // 全局布局组件
 
 const routes = [
@@ -59,8 +60,8 @@ const routes = [
         component: () => import('@/views/Message/MessageCenter.vue'),
         meta: {
           title: '消息中心',
-          requiresAuth: true
-        }
+          requiresAuth: true,
+        },
       },
       // 消息详情
       {
@@ -69,12 +70,12 @@ const routes = [
         component: () => import('@/views/Message/MessageCenter.vue'),
         props: (route) => ({
           messageId: route.params.id,
-          messageType: route.query.type
+          messageType: route.query.type,
         }),
         meta: {
           title: '消息详情',
-          requiresAuth: true
-        }
+          requiresAuth: true,
+        },
       },
       // 帮助中心
       {
@@ -82,12 +83,12 @@ const routes = [
         name: 'HelpCenter',
         component: () => import('@/views/Help/HelpCenter.vue'),
         props: (route) => ({
-          section: route.query.section
+          section: route.query.section,
         }),
         meta: {
           title: '帮助文档',
-          requiresAuth: false
-        }
+          requiresAuth: false,
+        },
       },
       // 浏览历史
       {
@@ -96,8 +97,8 @@ const routes = [
         component: () => import('@/views/History/HistoryPage.vue'),
         meta: {
           title: '浏览历史',
-          requiresAuth: true
-        }
+          requiresAuth: true,
+        },
       },
       {
         path: '/profile',
@@ -105,9 +106,9 @@ const routes = [
         component: () => import('@/views/Profile/ProfilePage.vue'),
         meta: {
           requiresAuth: true,
-          title: '个人中心'
-        }
-      }
+          title: '个人中心',
+        },
+      },
     ],
   },
 
@@ -134,6 +135,10 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  const loadingStore = useLoadingStore()
+
+  // 开始加载
+  loadingStore.startLoading()
 
   // 检查登录状态
   authStore.checkAuth()
@@ -153,6 +158,11 @@ router.beforeEach((to, from, next) => {
 
 // 记录浏览历史
 router.afterEach((to) => {
+  const loadingStore = useLoadingStore()
+
+  // 停止加载
+  loadingStore.stopLoading()
+
   // 排除登录、注册页面
   if (to.name !== 'Login' && to.name !== 'Register') {
     const historyStore = useHistoryStore()
@@ -166,7 +176,7 @@ router.afterEach((to) => {
     historyStore.addVisitedPage({
       path: to.fullPath,
       title,
-      courseId: to.params.courseId
+      courseId: to.params.courseId,
     })
   }
 })

@@ -22,7 +22,7 @@
       </el-tooltip>
       <el-tooltip content="消息中心" placement="bottom">
         <el-badge :value="unreadCount" :hidden="!unreadCount">
-          <el-icon class="icon-btn" @click="goToMessageCenter"><message /></el-icon>
+          <el-icon class="icon-btn message-icon" @click="goToMessageCenter"><message /></el-icon>
         </el-badge>
       </el-tooltip>
       <el-tooltip content="设置" placement="bottom">
@@ -58,7 +58,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Message, Setting, User, SwitchButton, QuestionFilled } from '@element-plus/icons-vue'
+import {
+  Search,
+  Message,
+  Setting,
+  User,
+  SwitchButton,
+  QuestionFilled,
+} from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessageBox } from 'element-plus'
 import { useMessageStore } from '@/stores/message'
@@ -174,7 +181,7 @@ onUnmounted(() => {
   .header-right {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 22px;
     .icon-btn {
       font-size: 22px;
       color: #b0b3b8;
@@ -182,6 +189,9 @@ onUnmounted(() => {
       transition: color 0.2s;
       &:hover {
         color: #409eff;
+      }
+      &.message-icon {
+        transform: translateY(2px);
       }
     }
     .avatar {
