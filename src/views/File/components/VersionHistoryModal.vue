@@ -87,8 +87,10 @@ const fetchVersions = async () => {
   loading.value = true
   try {
     const res = await getFileVersions(props.fileId)
-    // 为每个版本添加下载加载状态
-    versions.value = (res.data || []).map((v) => ({ ...v, downloadLoading: false }))
+    // 为每个版本添加下载加载状态，并按创建时间倒序排序
+    versions.value = (res.data || [])
+      .map((v) => ({ ...v, downloadLoading: false }))
+      .sort((a, b) => new Date(b.createTime) - new Date(a.createTime))
   } catch (error) {
     console.error('获取版本列表失败：', error)
     versions.value = []
