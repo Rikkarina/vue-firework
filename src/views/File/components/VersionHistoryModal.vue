@@ -36,6 +36,9 @@
       <el-button type="primary" :icon="Upload" @click="handleUpload"> 上传新版本 </el-button>
     </div>
   </el-dialog>
+
+  <!-- 上传新版本模态框 -->
+  <upload-version v-model="showUploadVersionModal" :file-id="fileId" />
 </template>
 
 <script setup>
@@ -44,6 +47,7 @@ import { Download, Upload } from '@element-plus/icons-vue'
 import { getFileVersions } from '@/apis/version' // 导入获取版本列表的API
 import { ElMessage } from 'element-plus'
 import { useFileDownload } from '@/views/File/composables/useFileDownload' // 导入useFileDownload
+import UploadVersion from './UploadVersion.vue' // 导入上传版本组件
 
 const props = defineProps({
   modelValue: {
@@ -69,6 +73,9 @@ const versions = ref([])
 const loading = ref(false)
 
 const { startDownload } = useFileDownload() // 只导入startDownload
+
+// 上传版本模态框显示状态
+const showUploadVersionModal = ref(false)
 
 // 获取版本列表
 const fetchVersions = async () => {
@@ -119,7 +126,7 @@ const handleDownload = async (version) => {
 
 // 处理上传
 const handleUpload = () => {
-  console.log('上传新版本')
+  showUploadVersionModal.value = true
 }
 
 // 监听模态框显示状态，显示时获取版本列表
