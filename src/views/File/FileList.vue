@@ -7,6 +7,8 @@ import { useFilePreview } from '@/views/File/composables/useFilePreview' // 重�
 import FileCard from '@/components/FileCard.vue'
 import FilePreviewModal from '@/views/File/FilePreviewModal.vue' // 重新引入预览模态框
 import VersionHistoryModal from './components/VersionHistoryModal.vue'
+// import { downloadFileVersion } from '@/apis/version' // 导入版本下载API (不再需要直接调用)
+// import { ElMessage } from 'element-plus' // 导入ElMessage用于错误提示 (useFilePreview已处理)
 
 const {
   loading,
@@ -49,6 +51,27 @@ const handleFileCardClick = (file) => {
 const handleVersionClick = (file) => {
   currentFile.value = file
   showVersionModal.value = true
+}
+
+// 处理版本预览 (来自 VersionHistoryModal 的 @preview 事件)
+const handleVersionPreview = (version) => {
+  if (!currentFile.value) {
+    // 如果没有当前文件，说明没有选择文件或数据异常，进行提示
+    console.warn('未选择文件，无法预览版本。')
+    // 可以选择弹出ElMessage提示，但为了简洁，这里只打印警告
+    return
+  }
+
+  const fileToPreview = {
+    ...currentFile.value, // 保留原文件的一些显示信息
+    id: version.fileId, // 最关键：将ID设置为版本文件的实际文件ID
+    fileType: version.fileType || currentFile.value.fileType, // 使用版本中的fileType，如果没有则回退到原文件的
+    size: version.size || currentFile.value.size, // 使用版本中的size，如果没有则回退到原文件的
+    title: `${currentFile.value.title} - ${version.version} (${version.description || '无描述'})`,
+  }
+
+  // 调用通用的openPreviewModal，它会使用fileToPreview.id去下载对应文件内容
+  openPreviewModal(fileToPreview)
 }
 
 onMounted(() => {
@@ -103,7 +126,11 @@ onMounted(() => {
     />
 
     <!-- 版本历史模态框 -->
-    <version-history-modal v-model="showVersionModal" :file-id="currentFile?.id" />
+    <version-history-modal
+      v-model="showVersionModal"
+      :file-id="currentFile?.id"
+      @preview="handleVersionPreview"
+    />
   </div>
 </template>
 
