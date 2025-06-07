@@ -1,11 +1,12 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 // 导入并使用 useFileList Composable
 import { useFileList } from '@/views/File/composables/useFileList'
 // import { useFileDownload } from '@/views/File/composables/useFileDownload'
 import { useFilePreview } from '@/views/File/composables/useFilePreview' // 重新引入预览 composable
 import FileCard from '@/components/FileCard.vue'
 import FilePreviewModal from '@/views/File/FilePreviewModal.vue' // 重新引入预览模态框
+import VersionHistoryModal from './components/VersionHistoryModal.vue'
 
 const {
   loading,
@@ -29,6 +30,10 @@ const {
   closePreviewModal,
 } = useFilePreview()
 
+// 版本历史模态框相关
+const showVersionModal = ref(false)
+const currentFile = ref(null)
+
 // 处理文件卡片点击事件
 const handleFileCardClick = (file) => {
   // 阻止重复点击或在加载时点击 (保留对 previewLoading 的检查)
@@ -38,6 +43,12 @@ const handleFileCardClick = (file) => {
   }
 
   openPreviewModal(file)
+}
+
+// 处理版本按钮点击
+const handleVersionClick = (file) => {
+  currentFile.value = file
+  showVersionModal.value = true
 }
 
 onMounted(() => {
@@ -76,6 +87,7 @@ onMounted(() => {
           :size="file.size"
           :upload-time="file.uploadTime"
           @click="handleFileCardClick(file)"
+          @version="handleVersionClick"
           :loading="downloadLoading || previewLoading"
         />
       </div>
@@ -89,6 +101,9 @@ onMounted(() => {
       :loading="previewLoading"
       @close="closePreviewModal"
     />
+
+    <!-- 版本历史模态框 -->
+    <version-history-modal v-model="showVersionModal" :file-id="currentFile?.id" />
   </div>
 </template>
 
