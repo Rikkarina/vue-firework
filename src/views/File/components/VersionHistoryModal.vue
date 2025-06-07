@@ -38,7 +38,7 @@
   </el-dialog>
 
   <!-- 上传新版本模态框 -->
-  <upload-version v-model="showUploadVersionModal" :file-id="fileId" />
+  <upload-version v-model="showUploadVersionModal" :file-id="fileId" @success="fetchVersions" />
 </template>
 
 <script setup>
