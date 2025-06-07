@@ -181,7 +181,7 @@ onUnmounted(() => {
   .header-right {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 22px;
     .icon-btn {
       font-size: 22px;
       color: #b0b3b8;
