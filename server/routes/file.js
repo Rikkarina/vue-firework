@@ -47,6 +47,28 @@ const files = [
     uploadTime: '2024-03-15',
     downloadCount: 156,
     url: '/static/python-basic.pptx',
+    versions: [
+      {
+        id: 'v1_python_ppt',
+        fileId: 1,
+        version: 'v1.0.0',
+        description: 'Python基础语法PPT初始版本',
+        createTime: '2024-03-15 10:00:00',
+        uploader: 'admin',
+        size: 2621440,
+        fileUrl: '/static/python-basic.pptx',
+      },
+      {
+        id: 'v2_python_ppt',
+        fileId: 1,
+        version: 'v1.0.1',
+        description: 'Python基础语法PPT添加章节',
+        createTime: '2024-03-20 11:30:00',
+        uploader: 'admin',
+        size: 2700000,
+        fileUrl: '/static/python-basic-v2.pptx',
+      },
+    ],
   },
   {
     id: 2,
@@ -57,6 +79,18 @@ const files = [
     uploadTime: '2024-03-14',
     downloadCount: 89,
     url: '/static/python-exercises.pdf',
+    versions: [
+      {
+        id: 'v1_python_exercises',
+        fileId: 2,
+        version: 'v1.0.0',
+        description: 'Python编程练习题初始版本',
+        createTime: '2024-03-14 09:00:00',
+        uploader: 'admin',
+        size: 1258291,
+        fileUrl: '/static/python-exercises.pdf',
+      },
+    ],
   },
   {
     id: 3,
@@ -67,6 +101,18 @@ const files = [
     uploadTime: '2024-03-13',
     downloadCount: 234,
     url: '/static/test.pdf',
+    versions: [
+      {
+        id: 'v1_data_structure',
+        fileId: 3,
+        version: 'v1.0.0',
+        description: '数据结构与算法讲义初始版本',
+        createTime: '2024-03-13 14:00:00',
+        uploader: 'admin',
+        size: 3984589,
+        fileUrl: '/static/test.pdf',
+      },
+    ],
   },
 ]
 
@@ -115,6 +161,18 @@ router.post('/merge', (req, res) => {
       uploadTime: new Date().toISOString().split('T')[0],
       downloadCount: 0,
       url: `/static/${fileName}`, // 使用chunk接口返回的实际文件名
+      versions: [
+        {
+          id: `v1_${Date.now()}`,
+          fileId: Date.now(), // 使用与文件相同的ID作为fileId
+          version: 'v1.0.0',
+          description: '初始上传',
+          createTime: new Date().toISOString().split('T')[0],
+          uploader: 'admin', // 假设上传者是admin
+          size: parseInt(fileSize),
+          fileUrl: `/static/${fileName}`,
+        },
+      ],
     }
 
     // 将新文件信息添加到files数组中
@@ -154,6 +212,26 @@ router.get('/search', (req, res) => {
     code: 200,
     message: '搜索成功',
     data: matchedFiles,
+  })
+})
+
+// 获取文件版本列表
+router.get('/:fileId/versions', (req, res) => {
+  const fileId = parseInt(req.params.fileId)
+  const file = files.find((f) => f.id === fileId)
+
+  if (!file) {
+    return res.status(404).json({
+      code: 404,
+      message: '文件不存在',
+      data: null,
+    })
+  }
+
+  res.json({
+    code: 200,
+    message: '获取版本列表成功',
+    data: file.versions || [], // 返回文件版本列表，如果为空则返回空数组
   })
 })
 
