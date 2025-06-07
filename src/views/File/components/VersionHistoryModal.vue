@@ -23,7 +23,7 @@
             <el-button
               class="action-button"
               :icon="Download"
-              @click="handleDownload(row)"
+              @click.stop="handleDownload(row)"
               :loading="row.downloadLoading"
             />
           </div>
@@ -43,6 +43,7 @@ import { computed, ref, watch } from 'vue'
 import { Download, Upload } from '@element-plus/icons-vue'
 import { getFileVersions } from '@/apis/version' // 导入获取版本列表的API
 import { ElMessage } from 'element-plus'
+import { useFileDownload } from '@/views/File/composables/useFileDownload' // 导入useFileDownload
 
 const props = defineProps({
   modelValue: {
@@ -67,6 +68,8 @@ const visible = computed({
 const versions = ref([])
 const loading = ref(false)
 
+const { startDownload } = useFileDownload() // 只导入startDownload
+
 // 获取版本列表
 const fetchVersions = async () => {
   if (!props.fileId) {
@@ -77,7 +80,8 @@ const fetchVersions = async () => {
   loading.value = true
   try {
     const res = await getFileVersions(props.fileId)
-    versions.value = res.data || [] // 假设后端返回的数据在 res.data 中，且可能是空数组
+    // 为每个版本添加下载加载状态
+    versions.value = (res.data || []).map((v) => ({ ...v, downloadLoading: false }))
   } catch (error) {
     console.error('获取版本列表失败：', error)
     versions.value = []
@@ -85,6 +89,37 @@ const fetchVersions = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 处理版本点击（预览）
+const handleVersionClick = (row) => {
+  emit('preview', row)
+}
+
+// 处理下载
+const handleDownload = async (version) => {
+  // 构造一个与FileCard兼容的文件对象
+  const fileToDownload = {
+    id: version.fileId, // 使用版本文件的实际ID
+    title: `${version.version} - ${version.description || '文件'}`,
+    url: version.fileUrl, // 使用版本文件的URL来获取扩展名
+  }
+
+  // 设置当前版本行的下载状态为true
+  version.downloadLoading = true
+
+  try {
+    // 调用通用的下载功能
+    await startDownload(fileToDownload)
+  } finally {
+    // 下载完成后设置当前版本行的下载状态为false
+    version.downloadLoading = false
+  }
+}
+
+// 处理上传
+const handleUpload = () => {
+  console.log('上传新版本')
 }
 
 // 监听模态框显示状态，显示时获取版本列表
@@ -96,22 +131,7 @@ watch(
     }
   },
   { immediate: true },
-) // 立即执行一次，以防fileId在模态框创建时已存在
-
-// 处理版本点击（预览）
-const handleVersionClick = (row) => {
-  emit('preview', row)
-}
-
-// 处理下载
-const handleDownload = (version) => {
-  console.log('下载版本：', version)
-}
-
-// 处理上传
-const handleUpload = () => {
-  console.log('上传新版本')
-}
+)
 </script>
 
 <style lang="scss" scoped>
