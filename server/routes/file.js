@@ -235,6 +235,68 @@ router.get('/:fileId/versions', (req, res) => {
   })
 })
 
+// 创建新版本
+router.post('/:fileId/versions', upload.single('file'), (req, res) => {
+  try {
+    const fileId = parseInt(req.params.fileId)
+    const { description } = req.body
+    const file = files.find((f) => f.id === fileId)
+
+    if (!file) {
+      return res.status(404).json({
+        code: 404,
+        message: '文件不存在',
+        data: null,
+      })
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        code: 400,
+        message: '没有接收到文件',
+        data: null,
+      })
+    }
+
+    // 获取当前版本号
+    const currentVersions = file.versions || []
+    const lastVersion = currentVersions[currentVersions.length - 1]
+    const versionNumber = lastVersion
+      ? `v${parseFloat(lastVersion.version.slice(1)) + 0.1}`
+      : 'v1.0.0'
+
+    // 创建新版本信息
+    const newVersion = {
+      id: `v${Date.now()}`,
+      fileId: fileId,
+      version: versionNumber,
+      description: description || '新版本',
+      createTime: new Date().toISOString(),
+      uploader: req.user?.username || 'anonymous', // 假设有用户信息
+      size: req.file.size,
+      fileUrl: `/static/${req.file.filename}`,
+    }
+
+    // 更新文件信息
+    file.versions = [...currentVersions, newVersion]
+    file.url = newVersion.fileUrl // 更新文件URL为最新版本
+    file.size = newVersion.size // 更新文件大小为最新版本
+
+    res.json({
+      code: 200,
+      message: '新版本上传成功',
+      data: newVersion,
+    })
+  } catch (error) {
+    console.error('上传新版本失败：', error)
+    res.status(500).json({
+      code: 500,
+      message: '上传新版本失败',
+      data: null,
+    })
+  }
+})
+
 // 文件下载接口
 router.get('/download/:fileId', (req, res) => {
   const { fileId } = req.params
