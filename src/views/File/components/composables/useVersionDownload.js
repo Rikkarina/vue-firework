@@ -1,38 +1,61 @@
-import { downloadFileVersion } from '@/apis/version' // 导入特定版本下载API
+import { downloadFileVersion } from '@/apis/version'
 import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 
 export function useVersionDownload() {
-  // 新增：下载特定版本文件
+  const downloadLoading = ref(false)
+
   const startDownloadVersion = async (fileId, versionId, fileName) => {
+    // 检查是否已经在下载中
+    if (downloadLoading.value) {
+      ElMessage.warning('文件正在下载中，请勿重复操作')
+      return
+    }
+
+    downloadLoading.value = true
     try {
       const response = await downloadFileVersion(fileId, versionId)
 
-      if (response instanceof Blob) {
-        const url = window.URL.createObjectURL(new Blob([response]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', fileName)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        window.URL.revokeObjectURL(url)
-        ElMessage.success('文件下载成功')
-      } else {
-        // 处理非Blob响应，可能是错误信息
-        const reader = new FileReader()
-        reader.onload = function () {
-          try {
-            const errorData = JSON.parse(reader.result)
-            ElMessage.error(errorData.message || '文件下载失败')
-          } catch {
-            ElMessage.error('文件下载失败，请重试')
-          }
+      // 直接使用 response.data，因为它已经是 Blob 了
+      const blob = response.data
+
+      // 从 Content-Disposition 获取文件名
+      const contentDisposition = response.headers['content-disposition']
+      let finalFileName = fileName
+      if (contentDisposition) {
+        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition)
+        if (matches != null && matches[1]) {
+          finalFileName = decodeURIComponent(matches[1].replace(/['"]/g, ''))
         }
-        reader.readAsText(response)
       }
+
+      // 如果没有扩展名，添加扩展名
+      if (!finalFileName.includes('.')) {
+        const ext = 'pdf' // 默认使用 pdf 扩展名
+        finalFileName = `${finalFileName}.${ext}`
+      }
+
+      const url = window.URL.createObjectURL(blob)
+
+      // 创建下载链接
+      const link = document.createElement('a')
+      link.href = url
+      link.download = finalFileName
+      document.body.appendChild(link)
+      link.click()
+
+      // 清理
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(link)
+      }, 100)
+
+      ElMessage.success('文件下载成功')
     } catch (error) {
-      console.error('下载特定版本文件失败：', error)
-      ElMessage.error(error.message || '下载特定版本文件失败')
+      console.error('文件下载失败：', error)
+      ElMessage.error('文件下载失败')
+    } finally {
+      downloadLoading.value = false
     }
   }
 
@@ -43,12 +66,11 @@ export function useVersionDownload() {
 
     try {
       // 调用新的下载特定版本功能
-      // 这里的 fileId 和 versionId 是后端 downloadFileVersion API 所需的
       await startDownloadVersion(
         version.fileId,
         version.id,
         `${version.description || '文件'}-${version.version}.pdf`,
-      ) // 假设下载的文件名，您可以根据实际需求调整
+      )
     } finally {
       // 下载完成后设置当前版本行的下载状态为false
       version.downloadLoading = false
@@ -57,5 +79,6 @@ export function useVersionDownload() {
 
   return {
     handleDownload,
+    downloadLoading,
   }
 }

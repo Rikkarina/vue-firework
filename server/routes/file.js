@@ -381,4 +381,52 @@ router.get('/download/:fileId', (req, res) => {
   })
 })
 
+// 下载特定版本的文件
+router.get('/:fileId/versions/:versionId/download', (req, res) => {
+  const { fileId, versionId } = req.params
+
+  const file = files.find((f) => f.id.toString() === fileId)
+  if (!file) {
+    return res.status(404).json({
+      code: 404,
+      message: '文件不存在',
+      data: null,
+    })
+  }
+
+  const version = file.versions.find((v) => v.id === versionId)
+  if (!version) {
+    return res.status(404).json({
+      code: 404,
+      message: '版本不存在',
+      data: null,
+    })
+  }
+
+  const filePath = path.join(__dirname, '../../files', version.fileUrl.split('/static/')[1])
+
+  // 检查文件是否存在
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({
+      code: 404,
+      message: '文件资源不存在',
+      data: null,
+    })
+  }
+
+  // 使用 res.download() 方法发送文件
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error('文件下载失败：', err)
+      if (!res.headersSent) {
+        res.status(500).json({
+          code: 500,
+          message: '文件下载失败',
+          data: null,
+        })
+      }
+    }
+  })
+})
+
 export default router
