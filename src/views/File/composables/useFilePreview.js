@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { downloadFile } from '@/apis/file'
+import { downloadFileVersion } from '@/apis/version'
 import { ElMessage } from 'element-plus'
 
 export function useFilePreview() {
@@ -13,15 +14,22 @@ export function useFilePreview() {
   const previewLoading = ref(false)
 
   // 打开预览窗口并加载文件
-  const openPreviewModal = async (file) => {
+  const openPreviewModal = async (file, isVersion = false) => {
     previewFile.value = file
     isPreviewModalVisible.value = true
     previewLoading.value = true
     previewUrl.value = '' // 清空之前的预览 URL
 
     try {
-      // 这里我们仍然使用 downloadFile API 来获取 Blob 数据
-      const response = await downloadFile(file.id)
+      let response
+      if (isVersion) {
+        // 如果是版本预览，使用 downloadFileVersion API
+        response = await downloadFileVersion(file.id, file.versionId)
+      } else {
+        // 如果是普通文件预览，使用 downloadFile API
+        response = await downloadFile(file.id)
+      }
+
       const blob = response.data
       previewUrl.value = window.URL.createObjectURL(blob) + '#zoom=fit'
     } catch (error) {

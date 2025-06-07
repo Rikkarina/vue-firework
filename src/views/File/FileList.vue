@@ -65,13 +65,14 @@ const handleVersionPreview = (version) => {
   const fileToPreview = {
     ...currentFile.value, // 保留原文件的一些显示信息
     id: version.fileId, // 最关键：将ID设置为版本文件的实际文件ID
+    versionId: version.id, // 添加版本ID
     fileType: version.fileType || currentFile.value.fileType, // 使用版本中的fileType，如果没有则回退到原文件的
     size: version.size || currentFile.value.size, // 使用版本中的size，如果没有则回退到原文件的
     title: `${currentFile.value.title} - ${version.version} (${version.description || '无描述'})`,
   }
 
-  // 调用通用的openPreviewModal，它会使用fileToPreview.id去下载对应文件内容
-  openPreviewModal(fileToPreview)
+  // 调用通用的openPreviewModal，传入 isVersion=true 表示这是版本预览
+  openPreviewModal(fileToPreview, true)
 }
 
 onMounted(() => {
