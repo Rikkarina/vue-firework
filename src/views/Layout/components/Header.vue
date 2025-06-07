@@ -17,11 +17,13 @@
       </el-input>
     </div>
     <div class="header-right">
-      <el-tooltip content="夜间模式" placement="bottom">
-        <el-icon class="icon-btn"><moon /></el-icon>
+      <el-tooltip content="帮助文档" placement="bottom">
+        <el-icon class="icon-btn" @click="goToHelpCenter"><question-filled /></el-icon>
       </el-tooltip>
       <el-tooltip content="消息中心" placement="bottom">
-        <el-icon class="icon-btn"><message /></el-icon>
+        <el-badge :value="unreadCount" :hidden="!unreadCount">
+          <el-icon class="icon-btn" @click="goToMessageCenter"><message /></el-icon>
+        </el-badge>
       </el-tooltip>
       <el-tooltip content="设置" placement="bottom">
         <el-icon class="icon-btn"><setting /></el-icon>
@@ -54,15 +56,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Moon, Message, Setting, User, SwitchButton } from '@element-plus/icons-vue'
+import { Search, Message, Setting, User, SwitchButton, QuestionFilled } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessageBox } from 'element-plus'
+import { useMessageStore } from '@/stores/message'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const messageStore = useMessageStore()
 const searchQuery = ref('')
+const unreadCount = ref(0)
 
 const handleSearch = () => {
   if (searchQuery.value) {
@@ -95,6 +100,34 @@ const handleCommand = async (command) => {
       break
   }
 }
+
+// 跳转到帮助中心
+const goToHelpCenter = () => {
+  router.push({ name: 'HelpCenter' })
+}
+
+// 跳转到消息中心
+const goToMessageCenter = () => {
+  router.push('/message')
+}
+
+// 更新未读消息数量
+const updateUnreadCount = () => {
+  unreadCount.value = messageStore.unreadCount
+}
+
+onMounted(async () => {
+  // 初始化加载消息
+  await messageStore.loadMessages()
+  updateUnreadCount()
+
+  // 监听未读消息更新事件
+  window.addEventListener('unread-messages-updated', updateUnreadCount)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('unread-messages-updated', updateUnreadCount)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -172,6 +205,17 @@ const handleCommand = async (command) => {
 
   .el-icon {
     font-size: 16px;
+  }
+}
+
+.icon-btn {
+  font-size: 20px;
+  cursor: pointer;
+  color: #606266;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #409eff;
   }
 }
 </style>
