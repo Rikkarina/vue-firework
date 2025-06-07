@@ -239,7 +239,7 @@ router.get('/:fileId/versions', (req, res) => {
 router.post('/:fileId/versions', upload.single('file'), (req, res) => {
   try {
     const fileId = parseInt(req.params.fileId)
-    const { description } = req.body
+    const { description, version } = req.body
     const file = files.find((f) => f.id === fileId)
 
     if (!file) {
@@ -258,18 +258,39 @@ router.post('/:fileId/versions', upload.single('file'), (req, res) => {
       })
     }
 
-    // 获取当前版本号
+    if (!version) {
+      return res.status(400).json({
+        code: 400,
+        message: '版本号不能为空',
+        data: null,
+      })
+    }
+
+    // 检查版本号格式
+    if (!/^v\d+\.\d+\.\d+$/.test(version)) {
+      return res.status(400).json({
+        code: 400,
+        message: '版本号格式不正确，应为 v1.0.0 格式',
+        data: null,
+      })
+    }
+
+    // 检查版本号是否已存在
     const currentVersions = file.versions || []
-    const lastVersion = currentVersions[currentVersions.length - 1]
-    const versionNumber = lastVersion
-      ? `v${parseFloat(lastVersion.version.slice(1)) + 0.1}`
-      : 'v1.0.0'
+    const versionExists = currentVersions.some((v) => v.version === version)
+    if (versionExists) {
+      return res.status(400).json({
+        code: 400,
+        message: '该版本号已存在',
+        data: null,
+      })
+    }
 
     // 创建新版本信息
     const newVersion = {
       id: `v${Date.now()}`,
       fileId: fileId,
-      version: versionNumber,
+      version: version,
       description: description || '新版本',
       createTime: new Date().toISOString(),
       uploader: req.user?.username || 'anonymous', // 假设有用户信息

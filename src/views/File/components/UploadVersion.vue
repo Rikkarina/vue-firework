@@ -195,6 +195,7 @@ const submitUpload = async () => {
     const submitData = new FormData()
     submitData.append('file', formData.file)
     submitData.append('description', formData.description)
+    submitData.append('version', formData.version)
 
     // 调用创建版本 API
     const response = await createFileVersion(props.fileId, submitData)
