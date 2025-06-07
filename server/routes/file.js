@@ -414,17 +414,45 @@ router.get('/:fileId/versions/:versionId/download', (req, res) => {
     })
   }
 
-  // 使用 res.download() 方法发送文件
-  res.download(filePath, (err) => {
-    if (err) {
-      console.error('文件下载失败：', err)
-      if (!res.headersSent) {
-        res.status(500).json({
-          code: 500,
-          message: '文件下载失败',
-          data: null,
-        })
-      }
+  // 设置响应头
+  const ext = path.extname(filePath)
+  const fileName = `${file.title}-${version.description}-${version.version}${ext}`
+
+  // 使用 filename 而不是 filename*，因为某些客户端可能不支持 filename*
+  res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(fileName)}"`)
+
+  // 根据文件扩展名设置正确的 Content-Type
+  const mimeTypes = {
+    '.pdf': 'application/pdf',
+    '.doc': 'application/msword',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.zip': 'application/zip',
+    '.rar': 'application/x-rar-compressed',
+    '.txt': 'text/plain',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+  }
+
+  res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream')
+
+  // 创建文件流并发送
+  const fileStream = fs.createReadStream(filePath)
+  fileStream.pipe(res)
+
+  // 错误处理
+  fileStream.on('error', () => {
+    if (!res.headersSent) {
+      res.status(500).json({
+        code: 500,
+        message: '文件下载失败',
+        data: null,
+      })
     }
   })
 })
