@@ -3,8 +3,7 @@
     <div class="file-actions">
       <el-button
         class="action-button"
-        :icon="isFavorite ? StarFilled : Star"
-        :type="isFavorite ? 'warning' : 'default'"
+        :icon="isFavorite ? 'StarFilled' : 'Star'"
         @click.stop="handleFavorite"
       />
       <el-button
