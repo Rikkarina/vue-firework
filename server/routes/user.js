@@ -152,9 +152,9 @@ router.get('/favorite', (req, res) => {
 
 // 添加资源到收藏夹
 router.post('/favorite/resources', (req, res) => {
-  const { resourceId } = req.body
+  const { id, title, fileType, size, uploadTime } = req.body
 
-  if (!resourceId) {
+  if (!id) {
     return res.status(400).json({
       code: 400,
       message: '资源ID不能为空',
@@ -163,7 +163,7 @@ router.post('/favorite/resources', (req, res) => {
   }
 
   // 检查是否已收藏
-  if (userFavorite.resources.some((res) => res.id === resourceId)) {
+  if (userFavorite.resources.some((res) => res.id === id)) {
     return res.status(400).json({
       code: 400,
       message: '该资源已收藏',
@@ -173,11 +173,11 @@ router.post('/favorite/resources', (req, res) => {
 
   // 添加新资源
   const newResource = {
-    id: resourceId,
-    title: `资源${resourceId}`,
-    fileType: 'file',
-    size: 1024 * 1024, // 1MB
-    uploadTime: '2023-10-27',
+    id,
+    title,
+    fileType,
+    size,
+    uploadTime,
   }
 
   userFavorite.resources.push(newResource)
@@ -188,7 +188,7 @@ router.post('/favorite/resources', (req, res) => {
     code: 200,
     message: '添加收藏成功',
     data: {
-      resourceId,
+      resourceId: id,
       addedAt: new Date().toISOString(),
     },
   })

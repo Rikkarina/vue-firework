@@ -3,7 +3,7 @@
     <div class="file-actions">
       <el-button
         class="action-button"
-        :icon="isFavorite ? 'StarFilled' : 'Star'"
+        :icon="favoriteStatus ? StarFilled : Star"
         @click.stop="handleFavorite"
       />
       <el-button
@@ -44,6 +44,7 @@ import { FileFormat } from '@/types/fileTypes'
 import { addToFavorite, removeFromFavorite } from '@/apis/favorite'
 import { useFileDownload } from '@/views/File/composables/useFileDownload'
 import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 
 const props = defineProps({
   id: {
@@ -72,9 +73,12 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['click', 'favorite-change', 'version'])
+const emit = defineEmits(['click', 'version'])
 
 const { startDownload, downloadLoading } = useFileDownload()
+
+// 创建响应式的收藏状态
+const favoriteStatus = ref(props.isFavorite)
 
 // 获取文件图标
 const getFileIcon = (fileType) => {
@@ -111,15 +115,20 @@ const handleClick = () => {
 // 处理收藏
 const handleFavorite = async () => {
   try {
-    console.log(props.isFavorite)
-    if (props.isFavorite) {
+    if (favoriteStatus.value) {
       await removeFromFavorite(props.id)
       ElMessage.success('已取消收藏')
     } else {
-      await addToFavorite(props.id)
+      await addToFavorite({
+        id: props.id,
+        title: props.title,
+        fileType: props.fileType,
+        size: props.size,
+        uploadTime: props.uploadTime,
+      })
       ElMessage.success('收藏成功')
     }
-    emit('favorite-change', !props.isFavorite)
+    favoriteStatus.value = !favoriteStatus.value
   } catch (error) {
     console.error('收藏操作失败：', error)
     ElMessage.error('操作失败，请重试')

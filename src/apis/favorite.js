@@ -28,14 +28,19 @@ export function updateFavorite(data) {
 
 /**
  * 添加资源到收藏夹
- * @param {string} resourceId - 资源ID
+ * @param {Object} fileInfo - 文件信息
+ * @param {string} fileInfo.id - 资源ID
+ * @param {string} fileInfo.title - 文件标题
+ * @param {string} fileInfo.fileType - 文件类型
+ * @param {number} fileInfo.size - 文件大小
+ * @param {string} fileInfo.uploadTime - 上传时间
  * @returns {Promise}
  */
-export function addToFavorite(resourceId) {
+export function addToFavorite(fileInfo) {
   return request({
     url: '/api/user/favorite/resources',
     method: 'post',
-    data: { resourceId },
+    data: fileInfo,
   })
 }
 
