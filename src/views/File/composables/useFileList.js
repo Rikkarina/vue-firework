@@ -59,6 +59,7 @@ export function useFileList() {
     fileList,
     selectedType,
     selectedCategory,
+    isFavorite,
     pageTitle,
     fetchFileList,
     FileType, // 将枚举也暴露出去，方便模板使用

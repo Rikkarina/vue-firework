@@ -112,6 +112,7 @@ const handleClick = () => {
 // 处理收藏
 const handleFavorite = async () => {
   try {
+    console.log(props.isFavorite)
     if (props.isFavorite) {
       await removeFromFavorite(props.id)
       ElMessage.success('已取消收藏')

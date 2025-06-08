@@ -15,6 +15,7 @@ const {
   fileList,
   selectedType,
   selectedCategory,
+  isFavorite,
   pageTitle,
   fetchFileList,
   FileType,
@@ -110,6 +111,7 @@ onMounted(() => {
           :file-type="file.fileType"
           :size="file.size"
           :upload-time="file.uploadTime"
+          :is-favorite="isFavorite"
           @click="handleFileCardClick(file)"
           @version="handleVersionClick"
           :loading="downloadLoading || previewLoading"
