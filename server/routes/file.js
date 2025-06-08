@@ -38,12 +38,13 @@ const upload = multer({
 
 // 模拟文件数据库
 const files = [
+  // Python课程文件 (courseId: 101)
   {
     id: 1,
     courseId: 101,
     title: 'Python基础语法PPT',
     type: '课件',
-    size: 2621440, // 2.5MB = 2.5 * 1024 * 1024
+    size: 2621440, // 2.5MB
     uploadTime: '2024-03-15',
     downloadCount: 156,
     url: '/static/python-basic.pptx',
@@ -75,7 +76,7 @@ const files = [
     courseId: 101,
     title: 'Python编程练习题',
     type: '习题',
-    size: 1258291, // 1.2MB = 1.2 * 1024 * 1024
+    size: 1258291, // 1.2MB
     uploadTime: '2024-03-14',
     downloadCount: 89,
     url: '/static/python-exercises.pdf',
@@ -94,23 +95,399 @@ const files = [
   },
   {
     id: 3,
+    courseId: 101,
+    title: 'Python环境配置指南',
+    type: '课件',
+    size: 1048576, // 1MB
+    uploadTime: '2024-03-16',
+    downloadCount: 245,
+    url: '/static/python-env-guide.pdf',
+    versions: [
+      {
+        id: 'v1_python_env',
+        fileId: 3,
+        version: 'v1.0.0',
+        description: 'Python环境配置指南',
+        createTime: '2024-03-16 14:00:00',
+        uploader: 'admin',
+        size: 1048576,
+        fileUrl: '/static/python-env-guide.pdf',
+      },
+    ],
+  },
+  {
+    id: 4,
+    courseId: 101,
+    title: 'Python数据类型详解',
+    type: '课件',
+    size: 1835008, // 1.75MB
+    uploadTime: '2024-03-17',
+    downloadCount: 178,
+    url: '/static/python-data-types.pptx',
+    versions: [
+      {
+        id: 'v1_python_types',
+        fileId: 4,
+        version: 'v1.0.0',
+        description: 'Python数据类型详解',
+        createTime: '2024-03-17 09:30:00',
+        uploader: 'admin',
+        size: 1835008,
+        fileUrl: '/static/python-data-types.pptx',
+      },
+    ],
+  },
+  {
+    id: 5,
+    courseId: 101,
+    title: 'Python函数与模块',
+    type: '课件',
+    size: 2097152, // 2MB
+    uploadTime: '2024-03-18',
+    downloadCount: 167,
+    url: '/static/python-functions.pptx',
+    versions: [
+      {
+        id: 'v1_python_functions',
+        fileId: 5,
+        version: 'v1.0.0',
+        description: 'Python函数与模块',
+        createTime: '2024-03-18 10:15:00',
+        uploader: 'admin',
+        size: 2097152,
+        fileUrl: '/static/python-functions.pptx',
+      },
+    ],
+  },
+  {
+    id: 6,
+    courseId: 101,
+    title: 'Python面向对象编程',
+    type: '课件',
+    size: 2359296, // 2.25MB
+    uploadTime: '2024-03-19',
+    downloadCount: 145,
+    url: '/static/python-oop.pptx',
+    versions: [
+      {
+        id: 'v1_python_oop',
+        fileId: 6,
+        version: 'v1.0.0',
+        description: 'Python面向对象编程',
+        createTime: '2024-03-19 11:00:00',
+        uploader: 'admin',
+        size: 2359296,
+        fileUrl: '/static/python-oop.pptx',
+      },
+    ],
+  },
+  {
+    id: 7,
+    courseId: 101,
+    title: 'Python文件操作实验',
+    type: '实验',
+    size: 1572864, // 1.5MB
+    uploadTime: '2024-03-20',
+    downloadCount: 98,
+    url: '/static/python-file-lab.pdf',
+    versions: [
+      {
+        id: 'v1_python_file_lab',
+        fileId: 7,
+        version: 'v1.0.0',
+        description: 'Python文件操作实验',
+        createTime: '2024-03-20 13:45:00',
+        uploader: 'admin',
+        size: 1572864,
+        fileUrl: '/static/python-file-lab.pdf',
+      },
+    ],
+  },
+  {
+    id: 8,
+    courseId: 101,
+    title: 'Python异常处理',
+    type: '课件',
+    size: 1310720, // 1.25MB
+    uploadTime: '2024-03-21',
+    downloadCount: 112,
+    url: '/static/python-exceptions.pptx',
+    versions: [
+      {
+        id: 'v1_python_exceptions',
+        fileId: 8,
+        version: 'v1.0.0',
+        description: 'Python异常处理',
+        createTime: '2024-03-21 09:00:00',
+        uploader: 'admin',
+        size: 1310720,
+        fileUrl: '/static/python-exceptions.pptx',
+      },
+    ],
+  },
+  {
+    id: 9,
+    courseId: 101,
+    title: 'Python期末复习资料',
+    type: '课件',
+    size: 3145728, // 3MB
+    uploadTime: '2024-03-22',
+    downloadCount: 289,
+    url: '/static/python-review.pdf',
+    versions: [
+      {
+        id: 'v1_python_review',
+        fileId: 9,
+        version: 'v1.0.0',
+        description: 'Python期末复习资料',
+        createTime: '2024-03-22 14:30:00',
+        uploader: 'admin',
+        size: 3145728,
+        fileUrl: '/static/python-review.pdf',
+      },
+    ],
+  },
+  {
+    id: 10,
+    courseId: 101,
+    title: 'Python项目实战指南',
+    type: '课件',
+    size: 3670016, // 3.5MB
+    uploadTime: '2024-03-23',
+    downloadCount: 156,
+    url: '/static/python-project.pdf',
+    versions: [
+      {
+        id: 'v1_python_project',
+        fileId: 10,
+        version: 'v1.0.0',
+        description: 'Python项目实战指南',
+        createTime: '2024-03-23 10:00:00',
+        uploader: 'admin',
+        size: 3670016,
+        fileUrl: '/static/python-project.pdf',
+      },
+    ],
+  },
+
+  // 数据结构课程文件 (courseId: 102)
+  {
+    id: 11,
     courseId: 102,
     title: '数据结构与算法讲义',
     type: '课件',
-    size: 3984589, // 3.8MB = 3.8 * 1024 * 1024
+    size: 3984589, // 3.8MB
     uploadTime: '2024-03-13',
     downloadCount: 234,
     url: '/static/test.pdf',
     versions: [
       {
         id: 'v1_data_structure',
-        fileId: 3,
+        fileId: 11,
         version: 'v1.0.0',
         description: '数据结构与算法讲义初始版本',
         createTime: '2024-03-13 14:00:00',
         uploader: 'admin',
         size: 3984589,
         fileUrl: '/static/test.pdf',
+      },
+    ],
+  },
+  {
+    id: 12,
+    courseId: 102,
+    title: '线性表与链表',
+    type: '课件',
+    size: 2359296, // 2.25MB
+    uploadTime: '2024-03-14',
+    downloadCount: 167,
+    url: '/static/linear-list.pptx',
+    versions: [
+      {
+        id: 'v1_linear_list',
+        fileId: 12,
+        version: 'v1.0.0',
+        description: '线性表与链表',
+        createTime: '2024-03-14 09:30:00',
+        uploader: 'admin',
+        size: 2359296,
+        fileUrl: '/static/linear-list.pptx',
+      },
+    ],
+  },
+  {
+    id: 13,
+    courseId: 102,
+    title: '栈与队列',
+    type: '课件',
+    size: 2097152, // 2MB
+    uploadTime: '2024-03-15',
+    downloadCount: 145,
+    url: '/static/stack-queue.pptx',
+    versions: [
+      {
+        id: 'v1_stack_queue',
+        fileId: 13,
+        version: 'v1.0.0',
+        description: '栈与队列',
+        createTime: '2024-03-15 10:15:00',
+        uploader: 'admin',
+        size: 2097152,
+        fileUrl: '/static/stack-queue.pptx',
+      },
+    ],
+  },
+  {
+    id: 14,
+    courseId: 102,
+    title: '树与二叉树',
+    type: '课件',
+    size: 2883584, // 2.75MB
+    uploadTime: '2024-03-16',
+    downloadCount: 189,
+    url: '/static/tree.pptx',
+    versions: [
+      {
+        id: 'v1_tree',
+        fileId: 14,
+        version: 'v1.0.0',
+        description: '树与二叉树',
+        createTime: '2024-03-16 11:00:00',
+        uploader: 'admin',
+        size: 2883584,
+        fileUrl: '/static/tree.pptx',
+      },
+    ],
+  },
+  {
+    id: 15,
+    courseId: 102,
+    title: '图论基础',
+    type: '课件',
+    size: 3145728, // 3MB
+    uploadTime: '2024-03-17',
+    downloadCount: 178,
+    url: '/static/graph.pptx',
+    versions: [
+      {
+        id: 'v1_graph',
+        fileId: 15,
+        version: 'v1.0.0',
+        description: '图论基础',
+        createTime: '2024-03-17 13:45:00',
+        uploader: 'admin',
+        size: 3145728,
+        fileUrl: '/static/graph.pptx',
+      },
+    ],
+  },
+  {
+    id: 16,
+    courseId: 102,
+    title: '排序算法',
+    type: '课件',
+    size: 2621440, // 2.5MB
+    uploadTime: '2024-03-18',
+    downloadCount: 156,
+    url: '/static/sorting.pptx',
+    versions: [
+      {
+        id: 'v1_sorting',
+        fileId: 16,
+        version: 'v1.0.0',
+        description: '排序算法',
+        createTime: '2024-03-18 09:00:00',
+        uploader: 'admin',
+        size: 2621440,
+        fileUrl: '/static/sorting.pptx',
+      },
+    ],
+  },
+  {
+    id: 17,
+    courseId: 102,
+    title: '查找算法',
+    type: '课件',
+    size: 2359296, // 2.25MB
+    uploadTime: '2024-03-19',
+    downloadCount: 134,
+    url: '/static/searching.pptx',
+    versions: [
+      {
+        id: 'v1_searching',
+        fileId: 17,
+        version: 'v1.0.0',
+        description: '查找算法',
+        createTime: '2024-03-19 10:30:00',
+        uploader: 'admin',
+        size: 2359296,
+        fileUrl: '/static/searching.pptx',
+      },
+    ],
+  },
+  {
+    id: 18,
+    courseId: 102,
+    title: '数据结构实验指导',
+    type: '实验',
+    size: 1835008, // 1.75MB
+    uploadTime: '2024-03-20',
+    downloadCount: 167,
+    url: '/static/data-structure-lab.pdf',
+    versions: [
+      {
+        id: 'v1_data_structure_lab',
+        fileId: 18,
+        version: 'v1.0.0',
+        description: '数据结构实验指导',
+        createTime: '2024-03-20 14:15:00',
+        uploader: 'admin',
+        size: 1835008,
+        fileUrl: '/static/data-structure-lab.pdf',
+      },
+    ],
+  },
+  {
+    id: 19,
+    courseId: 102,
+    title: '算法复杂度分析',
+    type: '课件',
+    size: 1572864, // 1.5MB
+    uploadTime: '2024-03-21',
+    downloadCount: 145,
+    url: '/static/complexity.pptx',
+    versions: [
+      {
+        id: 'v1_complexity',
+        fileId: 19,
+        version: 'v1.0.0',
+        description: '算法复杂度分析',
+        createTime: '2024-03-21 11:00:00',
+        uploader: 'admin',
+        size: 1572864,
+        fileUrl: '/static/complexity.pptx',
+      },
+    ],
+  },
+  {
+    id: 20,
+    courseId: 102,
+    title: '数据结构期末复习资料',
+    type: '课件',
+    size: 3670016, // 3.5MB
+    uploadTime: '2024-03-22',
+    downloadCount: 289,
+    url: '/static/data-structure-review.pdf',
+    versions: [
+      {
+        id: 'v1_data_structure_review',
+        fileId: 20,
+        version: 'v1.0.0',
+        description: '数据结构期末复习资料',
+        createTime: '2024-03-22 15:30:00',
+        uploader: 'admin',
+        size: 3670016,
+        fileUrl: '/static/data-structure-review.pdf',
       },
     ],
   },

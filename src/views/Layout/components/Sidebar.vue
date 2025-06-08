@@ -25,7 +25,7 @@
       </el-menu-item>
       <el-menu-item index="/history">
         <el-icon><tickets /></el-icon>
-        <span>历史记录</span>
+        <span>最近浏览</span>
       </el-menu-item>
       <el-menu-item index="/help">
         <el-icon><question-filled /></el-icon>
@@ -42,14 +42,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import {
-  Grid,
-  Collection,
-  Upload,
-  Tickets,
-  QuestionFilled,
-  User,
-} from '@element-plus/icons-vue'
+import { Grid, Collection, Upload, Tickets, QuestionFilled, User } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
