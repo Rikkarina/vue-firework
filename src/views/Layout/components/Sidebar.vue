@@ -23,13 +23,9 @@
         <el-icon><upload /></el-icon>
         <span>文件上传</span>
       </el-menu-item>
-      <el-menu-item index="/iteration" disabled>
-        <el-icon><cpu /></el-icon>
-        <span>迭代功能</span>
-      </el-menu-item>
       <el-menu-item index="/history">
         <el-icon><tickets /></el-icon>
-        <span>版本记录</span>
+        <span>历史记录</span>
       </el-menu-item>
       <el-menu-item index="/help">
         <el-icon><question-filled /></el-icon>
@@ -50,7 +46,6 @@ import {
   Grid,
   Collection,
   Upload,
-  Cpu,
   Tickets,
   QuestionFilled,
   User,

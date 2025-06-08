@@ -178,7 +178,7 @@
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Edit, Lock, Mobile, SwitchButton } from '@element-plus/icons-vue'
+import { Edit, Lock, SwitchButton } from '@element-plus/icons-vue'
 
 const authStore = useAuthStore()
 const userInfo = computed(() => authStore.userInfo)
