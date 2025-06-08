@@ -33,7 +33,7 @@ export function updateFavorite(data) {
  */
 export function addToFavorite(resourceId) {
   return request({
-    url: '/api/favorite/resources',
+    url: '/api/user/favorite/resources',
     method: 'post',
     data: { resourceId },
   })
@@ -46,7 +46,7 @@ export function addToFavorite(resourceId) {
  */
 export function removeFromFavorite(resourceId) {
   return request({
-    url: `/api/favorite/resources/${resourceId}`,
+    url: `/api/user/favorite/resources/${resourceId}`,
     method: 'delete',
   })
 }
