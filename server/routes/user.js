@@ -12,6 +12,33 @@ const users = [
   },
 ]
 
+// 全局收藏夹数据
+const userFavorite = {
+  id: 'fav_shared',
+  name: '共享收藏夹',
+  description: '所有用户共享的收藏夹',
+  isPublic: true,
+  resourceCount: 0,
+  createdAt: '2023-10-27 10:00:00',
+  updatedAt: '2023-10-27 10:00:00',
+  resources: [
+    {
+      id: 'res1',
+      title: '课程PPT第一章',
+      fileType: 'ppt',
+      size: 5242880, // 5MB
+      uploadTime: '2023-10-27',
+    },
+    {
+      id: 'res2',
+      title: '软件安装包',
+      fileType: 'zip',
+      size: 10485760, // 10MB
+      uploadTime: '2023-10-27',
+    },
+  ],
+}
+
 // 获取用户信息
 router.get('/', (req, res) => {
   res.json({
@@ -116,37 +143,91 @@ router.post('/auth/register', (req, res) => {
 
 // 获取用户收藏夹
 router.get('/favorite', (req, res) => {
-  const userFavorite = {
-    id: 'fav_user1',
-    userId: 'user1',
-    name: '我的默认收藏夹',
-    description: '这是我的收藏夹',
-    isPublic: false,
-    resourceCount: 2,
-    createdAt: '2023-10-27 10:00:00',
-    updatedAt: '2023-10-27 10:00:00',
-    resources: [
-      {
-        id: 'res1',
-        title: '课程PPT第一章',
-        fileType: 'ppt',
-        size: 5242880, // 5MB
-        uploadTime: '2023-10-27',
-      },
-      {
-        id: 'res2',
-        title: '软件安装包',
-        fileType: 'zip',
-        size: 10485760, // 10MB
-        uploadTime: '2023-10-27',
-      },
-    ],
-  }
-
   res.json({
     code: 200,
     message: 'success',
     data: userFavorite,
+  })
+})
+
+// 添加资源到收藏夹
+router.post('/favorite/resources', (req, res) => {
+  const { resourceId } = req.body
+
+  if (!resourceId) {
+    return res.status(400).json({
+      code: 400,
+      message: '资源ID不能为空',
+      data: null,
+    })
+  }
+
+  // 检查是否已收藏
+  if (userFavorite.resources.some((res) => res.id === resourceId)) {
+    return res.status(400).json({
+      code: 400,
+      message: '该资源已收藏',
+      data: null,
+    })
+  }
+
+  // 添加新资源
+  const newResource = {
+    id: resourceId,
+    title: `资源${resourceId}`,
+    fileType: 'file',
+    size: 1024 * 1024, // 1MB
+    uploadTime: '2023-10-27',
+  }
+
+  userFavorite.resources.push(newResource)
+  userFavorite.resourceCount = userFavorite.resources.length
+  userFavorite.updatedAt = new Date().toISOString()
+
+  res.json({
+    code: 200,
+    message: '添加收藏成功',
+    data: {
+      resourceId,
+      addedAt: new Date().toISOString(),
+    },
+  })
+})
+
+// 从收藏夹移除资源
+router.delete('/favorite/resources/:resourceId', (req, res) => {
+  const { resourceId } = req.params
+
+  if (!resourceId) {
+    return res.status(400).json({
+      code: 400,
+      message: '资源ID不能为空',
+      data: null,
+    })
+  }
+
+  // 检查是否已收藏
+  const resourceIndex = userFavorite.resources.findIndex((res) => res.id === resourceId)
+  if (resourceIndex === -1) {
+    return res.status(400).json({
+      code: 400,
+      message: '该资源未收藏',
+      data: null,
+    })
+  }
+
+  // 移除资源
+  userFavorite.resources.splice(resourceIndex, 1)
+  userFavorite.resourceCount = userFavorite.resources.length
+  userFavorite.updatedAt = new Date().toISOString()
+
+  res.json({
+    code: 200,
+    message: '取消收藏成功',
+    data: {
+      resourceId,
+      removedAt: new Date().toISOString(),
+    },
   })
 })
 
