@@ -60,13 +60,7 @@
             </div>
           </template>
 
-          <el-form
-            ref="formRef"
-            :model="form"
-            :rules="rules"
-            label-width="100px"
-            class="edit-form"
-          >
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="edit-form">
             <el-form-item label="用户名" prop="username">
               <el-input v-model="form.username" />
             </el-form-item>
@@ -109,9 +103,7 @@
                 <el-icon><lock /></el-icon>
                 <span>登录密码</span>
               </div>
-              <el-button link type="primary" @click="handleChangePassword">
-                修改密码
-              </el-button>
+              <el-button link type="primary" @click="handleChangePassword"> 修改密码 </el-button>
             </div>
 
             <div class="security-item">
@@ -129,11 +121,7 @@
     </el-row>
 
     <!-- 修改密码对话框 -->
-    <el-dialog
-      v-model="changePasswordVisible"
-      title="修改密码"
-      width="400px"
-    >
+    <el-dialog v-model="changePasswordVisible" title="修改密码" width="400px">
       <el-form
         ref="passwordFormRef"
         :model="passwordForm"
@@ -141,33 +129,19 @@
         label-width="100px"
       >
         <el-form-item label="原密码" prop="oldPassword">
-          <el-input
-            v-model="passwordForm.oldPassword"
-            type="password"
-            show-password
-          />
+          <el-input v-model="passwordForm.oldPassword" type="password" show-password />
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input
-            v-model="passwordForm.newPassword"
-            type="password"
-            show-password
-          />
+          <el-input v-model="passwordForm.newPassword" type="password" show-password />
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input
-            v-model="passwordForm.confirmPassword"
-            type="password"
-            show-password
-          />
+          <el-input v-model="passwordForm.confirmPassword" type="password" show-password />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="changePasswordVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSavePassword">
-            确认
-          </el-button>
+          <el-button type="primary" @click="handleSavePassword"> 确认 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -193,22 +167,20 @@ const form = ref({
   username: '',
   email: '',
   phone: '',
-  bio: ''
+  bio: '',
 })
 
 // 表单校验规则
 const rules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
   ],
   email: [
     { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
   ],
-  phone: [
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
-  ]
+  phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
 }
 
 // 修改密码相关
@@ -217,16 +189,14 @@ const passwordFormRef = ref(null)
 const passwordForm = ref({
   oldPassword: '',
   newPassword: '',
-  confirmPassword: ''
+  confirmPassword: '',
 })
 
 const passwordRules = {
-  oldPassword: [
-    { required: true, message: '请输入原密码', trigger: 'blur' }
-  ],
+  oldPassword: [{ required: true, message: '请输入原密码', trigger: 'blur' }],
   newPassword: [
     { required: true, message: '请输入新密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
+    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' },
   ],
   confirmPassword: [
     { required: true, message: '请再次输入新密码', trigger: 'blur' },
@@ -238,9 +208,9 @@ const passwordRules = {
           callback()
         }
       },
-      trigger: 'blur'
-    }
-  ]
+      trigger: 'blur',
+    },
+  ],
 }
 
 // 处理编辑
@@ -249,7 +219,7 @@ const handleEdit = () => {
     username: userInfo.value?.username || '',
     email: userInfo.value?.email || '',
     phone: userInfo.value?.phone || '',
-    bio: userInfo.value?.bio || ''
+    bio: userInfo.value?.bio || '',
   }
   isEditing.value = true
 }
@@ -273,15 +243,11 @@ const handleSave = async () => {
 
 // 处理退出登录
 const handleLogout = () => {
-  ElMessageBox.confirm(
-    '确定要退出登录吗？',
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(() => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
     authStore.logout()
     ElMessage.success('已退出登录')
   })
@@ -293,7 +259,7 @@ const handleChangePassword = () => {
   passwordForm.value = {
     oldPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   }
 }
 
@@ -364,8 +330,20 @@ const formatDate = (date) => {
     .action-buttons {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 0 20px;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+      width: 100%;
+      .el-button {
+        max-width: 220px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1em;
+        border-radius: 24px;
+        font-weight: 500;
+      }
     }
   }
 
@@ -395,7 +373,7 @@ const formatDate = (date) => {
 
         .el-icon {
           font-size: 1.2em;
-          color: #409EFF;
+          color: #409eff;
         }
       }
     }
