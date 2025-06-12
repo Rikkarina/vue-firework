@@ -21,44 +21,33 @@ Firework 是一个现代化的课程资源共享平台，集成了资源版本�
 vue-firework/
 ├── src/                    # 前端源代码
 │   ├── apis/              # API 接口定义
-│   │   ├── file.js       # 文件相关接口
-│   │   ├── favorite.js   # 收藏相关接口
-│   │   └── user.js       # 用户相关接口
 │   ├── assets/            # 静态资源
 │   ├── components/        # 公共组件
-│   │   ├── FileCard.vue  # 文件卡片组件
-│   │   └── CourseCard.vue # 课程卡片组件
 │   ├── composables/       # 组合式函数
-│   │   └── File/         # 文件相关组合式函数
-│   │       ├── useFileList.js    # 文件列表逻辑
-│   │       ├── useFileDownload.js # 文件下载逻辑
-│   │       └── useFilePreview.js # 文件预览逻辑
 │   ├── router/            # 路由配置
 │   ├── store/             # 状态管理
 │   ├── types/             # TypeScript 类型定义
-│   │   ├── fileTypes.js  # 文件相关类型
-│   │   └── userTypes.js  # 用户相关类型
 │   ├── utils/             # 工具函数
-│   │   └── http.js       # HTTP 请求封装
 │   └── views/             # 页面组件
-│       ├── Course/        # 课程相关页面
-│       │   ├── CourseList.vue    # 课程列表页
-│       │   └── CourseDetail.vue  # 课程详情页
-│       ├── File/          # 文件相关页面
-│       │   ├── FileList.vue      # 文件列表页
-│       │   ├── FilePreviewModal.vue # 文件预览弹窗
-│       │   └── components/       # 文件页面组件
-│       │       └── VersionHistoryModal.vue # 版本历史弹窗
-│       ├── Profile/       # 个人中心页面
-│       │   ├── Profile.vue       # 个人资料页
-│       │   └── Favorites.vue     # 收藏夹页面
-│       └── Resource/      # 资源相关页面
-│           └── ResourceDetail.vue # 资源详情页
-├── server/                 # 后端源代码
-│   ├── routes/            # 路由处理
-│   ├── models/            # 数据模型
-│   └── utils/             # 工具函数
+│       ├── File/          # 文件管理模块，包含文件列表、上传下载、预览等功能
+│       ├── Profile/       # 个人中心模块，管理用户信息、设置和收藏夹
+│       ├── Message/       # 消息中心模块，处理系统通知和私信管理
+│       ├── History/       # 历史记录模块，记录用户浏览和操作历史
+│       ├── Help/          # 帮助中心模块，提供使用指南和问题反馈
+│       ├── Home/          # 首页模块，展示数据概览和快捷入口
+│       ├── Department/    # 部门管理模块，处理组织结构和权限分配
+│       ├── Upload/        # 上传中心模块，管理文件上传和进度
+│       ├── Layout/        # 布局组件模块，定义页面整体结构
+│       ├── Login/         # 登录认证模块，处理用户登录和注册
+│       ├── Browse/        # 资源浏览模块，提供资源分类和搜索
+│       └── Resource/      # 资源管理模块，处理资源详情和分享
 ├── public/                 # 公共资源
+├── .eslintrc.js           # ESLint 配置文件
+├── .prettierrc            # Prettier 代码格式化配置
+├── .gitignore             # Git 忽略文件配置
+├── index.html             # 项目入口 HTML
+├── vite.config.ts         # Vite 构建工具配置
+├── vitest.config.ts       # Vitest 测试框架配置
 └── package.json           # 项目配置
 ```
 
